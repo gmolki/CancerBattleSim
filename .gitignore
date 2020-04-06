@@ -1,0 +1,37 @@
+# OS generated files #
+######################
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Automatically created folders #
+#################################
+batch/
+bin/
+data/
+debug.log/
+docs/
+freezedried_data/
+icons/
+installer/
+integration/
+launchers/
+lib/
+output/
+repast-licenses/
+.settings/
+
+# Automatically created files #
+###############################
+debug.log
+license.txt
+MessageCenter.log4j.properties
+model_description.txt
+Repast.settings
+velocity.log
+.classpath
+.project
