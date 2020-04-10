@@ -32,11 +32,11 @@ public class CCell {
 		this.state = Mode.MOVE;
 		this.speed = 0.003;
 		this.pattern = "0000 0011";
-		this.multiply_chance = 0.1;
+		this.multiply_chance = 0;//0.0006;
 		this.random = new Random();
 	}
 
-	@ScheduledMethod(start = 1, interval = 1)
+	@ScheduledMethod(start = 1, interval = 1, shuffle=true)
 	public void step() {
 		switch (state) {
 		case MULTIPLY:

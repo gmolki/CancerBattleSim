@@ -1,0 +1,43 @@
+<repast.simphony.data2.engine.DataSetDescriptor simphonyVersion="2.7.0">
+  <name>Agent Counts</name>
+  <type>AGGREGATE</type>
+  <inclTick>true</inclTick>
+  <inclBatchRun>false</inclBatchRun>
+  <inclRandomSeed>false</inclRandomSeed>
+  <scheduleParams>
+    <start>1.0</start>
+    <interval>1.0</interval>
+    <priority>-Infinity</priority>
+    <pType>LAST</pType>
+    <duration>-1.0</duration>
+    <frequency>REPEAT</frequency>
+    <hashCode>-676816123</hashCode>
+  </scheduleParams>
+  <atEnd>false</atEnd>
+  <methodDataSources class="linked-hash-map"/>
+  <countSources class="linked-hash-map">
+    <entry>
+      <string>Remaining CCells</string>
+      <repast.simphony.data2.engine.CountSourceDefinition>
+        <typeName>cancerBattleSim.CCell</typeName>
+        <id>Remaining CCells</id>
+      </repast.simphony.data2.engine.CountSourceDefinition>
+    </entry>
+    <entry>
+      <string>Remaining NKCells</string>
+      <repast.simphony.data2.engine.CountSourceDefinition>
+        <typeName>cancerBattleSim.NKCell</typeName>
+        <id>Remaining NKCells</id>
+      </repast.simphony.data2.engine.CountSourceDefinition>
+    </entry>
+    <entry>
+      <string>Remaining NCells</string>
+      <repast.simphony.data2.engine.CountSourceDefinition>
+        <typeName>cancerBattleSim.NCell</typeName>
+        <id>Remaining NCells</id>
+      </repast.simphony.data2.engine.CountSourceDefinition>
+    </entry>
+  </countSources>
+  <customNADataSources class="linked-hash-map"/>
+  <customAggDataSources class="linked-hash-map"/>
+</repast.simphony.data2.engine.DataSetDescriptor>

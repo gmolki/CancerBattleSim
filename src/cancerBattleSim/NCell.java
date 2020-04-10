@@ -30,7 +30,7 @@ public class NCell {
 		this.random = new Random();
 	}
 
-	@ScheduledMethod(start = 1, interval = 1)
+	@ScheduledMethod(start = 1, interval = 1, shuffle=true)
 	private void step () {
 		switch (this.state) {
 		case MULTIPLY:
@@ -46,29 +46,11 @@ public class NCell {
 	}
 
 	private void move () {
-		System.out.println("Move");
 		if (random.nextFloat() < multiply_chance) {
 			this.state = Mode.MULTIPLY;
 		}
-		moveTowards(null);
+		Global.moveTowards(this, null, speed, space, grid);
 
-	}
-
-	private void moveTowards (Object target) {
-		if (target == null) {
-			double speed_splited = speed / 3,
-					x_distance = RandomHelper.nextIntFromTo(-1, 1) * speed_splited,
-					y_distance = RandomHelper.nextIntFromTo(-1, 1) * speed_splited,
-					z_distance = RandomHelper.nextIntFromTo(-1, 1) * speed_splited;
-
-			NdPoint newLocation = 
-					space.moveByDisplacement(this, x_distance, y_distance, z_distance);
-
-			grid.moveTo(this, 
-					(int)newLocation.getX(),
-					(int)newLocation.getY(),
-					(int)newLocation.getZ());
-		}
 	}
 
 	private void multiply () {

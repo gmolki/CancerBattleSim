@@ -6,7 +6,10 @@ import repast.simphony.context.space.continuous.ContinuousSpaceFactoryFinder;
 import repast.simphony.context.space.grid.GridFactory;
 import repast.simphony.context.space.grid.GridFactoryFinder;
 import repast.simphony.dataLoader.ContextBuilder;
+import repast.simphony.engine.environment.RunEnvironment;
+import repast.simphony.parameter.Parameters;
 import repast.simphony.space.continuous.ContinuousSpace;
+import repast.simphony.space.continuous.NdPoint;
 import repast.simphony.space.continuous.RandomCartesianAdder;
 import repast.simphony.space.grid.Grid;
 import repast.simphony.space.grid.GridBuilderParameters;
@@ -19,34 +22,42 @@ public class CellsBattleSimBuilder implements ContextBuilder<Object> {
 	public Context build(Context<Object> context) {
 		context.setId("CancerBattleSim");
 		
+		int dim = 20;
+		
 		ContinuousSpaceFactory spaceFactory =
 				ContinuousSpaceFactoryFinder.createContinuousSpaceFactory(null);
 		ContinuousSpace<Object> space = 
 				spaceFactory.createContinuousSpace("space", context,
 						new RandomCartesianAdder<Object>(),
 						new repast.simphony.space.continuous.WrapAroundBorders(),
-						50, 50, 50);
+						dim, dim, dim);
 		
 		GridFactory gridFactory = GridFactoryFinder.createGridFactory(null);
 		Grid<Object> grid = gridFactory.createGrid("grid", context,
 				new GridBuilderParameters<Object>(new WrapAroundBorders(),
 						new SimpleGridAdder<Object>(),
-						true, 50, 50, 50));
+						true, dim, dim, dim));
 		
-		// Creation of new CCells and adding it to the simulation space
-		int ccellCount = 5;
+		// Creation of new Cells and adding it to the simulation space
+		Parameters params = RunEnvironment.getInstance().getParameters();
+		int ccellCount = params.getInteger("ccell_count");
 		for (int i = 0; i < ccellCount; i++) {
 			context.add(new CCell(space, grid));
 		}
 		
-		int ncellCount = 5;
+		int ncellCount = params.getInteger("ncell_count");
 		for (int i = 0; i < ncellCount; i++) {
 			context.add(new NCell(space, grid));
 		}
 		
-		int nkellCount = 100;
+		int nkellCount = params.getInteger("nkcell_count");
 		for (int i = 0; i < nkellCount; i++) {
 			context.add(new NKCell(space, grid));
+		}
+		
+		for (Object cell : context) {
+			NdPoint pt = space.getLocation(cell);
+			grid.moveTo(cell, (int)pt.getX(), (int)pt.getY(), (int)pt.getZ());
 		}
 		
 		return context;
