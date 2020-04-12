@@ -87,27 +87,8 @@ public class CCell {
 		if (random.nextFloat() < multiply_chance) {
 			state = Mode.MULTIPLY;
 		}
-		moveTowards(null);
+		Global.moveTowards(this, null, speed, space, grid);
 
-	}
-
-	private void moveTowards (Object target) {
-		if (target == null) {
-			double speed_splited = speed / 3,
-					x_distance = RandomHelper.nextIntFromTo(-1, 1) * speed_splited,
-					y_distance = RandomHelper.nextIntFromTo(-1, 1) * speed_splited,
-					z_distance = RandomHelper.nextIntFromTo(-1, 1) * speed_splited;
-
-			NdPoint newLocation = 
-					space.moveByDisplacement(this, x_distance, y_distance, z_distance);
-
-			grid.moveTo(this, 
-					(int) newLocation.getX(),
-					(int) newLocation.getY(),
-					(int) newLocation.getZ());
-		} else {
-			//TODO: When a target exists
-		}
 	}
 
 	private void defend() { }

@@ -61,7 +61,12 @@ public class NKCell {
 		/**********************************************/
 		this.target_ccell = null;
 		this.neighbor_ccells = new ArrayList<CCell>();
+		
 		this.random = new Random();
+		
+		/****************SET EXPERIMENT****************/
+		this.setExperiment();
+		/**********************************************/
 	}
 
 	@ScheduledMethod(start = 1, interval = 1, shuffle=true)
@@ -203,7 +208,123 @@ public class NKCell {
 	}
 
 	private void setExperiment() {
-		//TODO
+		double targetpercent = 0.0,
+				target = 0.0,
+				current_value = 0.0,
+				diff = 0.0,
+				diffpercent = 0.0;
+		
+		int nexperiments = 5,
+				nparameters = 6;
+		/*
+		 * EXPERIMENT	RESTING	IL15	ULBP2	MICA	NKG2D	HLAI	RATIOS		TARGETS (per ratio)
+		 * 1			1		0		0		0		0		0		1,2,4,8		0.14, 0.16, 0.19, 0.26
+		 * 2			0		1		0		0		0		0					0.19, 0.27, 0.40, 0.45
+		 * 3			0		0		1		1		1		0					0.10, 0.10, 0.11, 0.13
+		 * 4			0		0		0		0		0		1					0.42, 0.55, 0.66, 0.73				
+		 * 5			0		1		0		0		0		1					0.41, 0.57, 0.74, 0.87
+		 */
+		
+		int[][] experiments = new int[nexperiments][nparameters];
+		experiments[0][0]=1;experiments[0][1]=0;experiments[0][2]=0;experiments[0][3]=0;experiments[0][4]=0;experiments[0][5]=0;
+		experiments[1][0]=0;experiments[1][1]=1;experiments[1][2]=0;experiments[1][3]=0;experiments[1][4]=0;experiments[1][5]=0;
+		experiments[2][0]=0;experiments[2][1]=0;experiments[2][2]=1;experiments[2][3]=1;experiments[2][4]=1;experiments[2][5]=0;
+		experiments[3][0]=0;experiments[3][1]=0;experiments[3][2]=0;experiments[3][3]=0;experiments[3][4]=0;experiments[3][5]=1;
+		experiments[4][0]=0;experiments[4][1]=1;experiments[4][2]=0;experiments[4][3]=0;experiments[4][4]=0;experiments[4][5]=1;
+		
+		
+		int experiment_id = 4;  // IMPORTANT. THIS CHOOSES THE EXPERIMENT ! goes from 0 to 4
+		
+		/***** EXPERIMENT 1 *****/									// 0.14, 0.16, 0.19, 0.26
+		//1:1 0.36  gave 343 and should be 344 * (redone)
+		//2:1 0.3 gave 335 and should be 336 * (redone)
+		//4:1 0.25 gave 328 and should be 324 * (redone)
+		//8:1 0.24 gave 286 and should be 296 * (redone)
+		/***** EXPERIMENT 2 *****/									// 0.19, 0.27, 0.40, 0.45
+		//1:1 0.4 gave 319 and should be 324 * (redone)
+		//2:1 0.35 gave 286 and should be 293 * (redone)
+		//4:1 0.3 gave 244 and should be 240 * (redone)
+		//8:1 0.25 gave 214 and should be 220 * (redone)
+		/***** EXPERIMENT 3 *****/ 									// 0.10, 0.10, 0.11, 0.13
+		//1:1 0.72 gave 364 and should be 360 *
+		//2:1 0.68 gave 367 and should be 360 *
+		//4:1 0.65 gave 346 and should be 356 *
+		//8:1 0.61 gave 346 and should be 348 *
+		/***** EXPERIMENT 4 *****/ 									// 0.42, 0.55, 0.66, 0.73
+		//1:1 0.56 gave 236 and should be 232 * (done)
+		//2:1 0.50 gave 184 and should be 180 * (done)
+		//4:1 0.445 gave 137 and should be 136 * (done)
+		//8:1 0.345 gave 105 and should be 108 * (done)
+		/***** EXPERIMENT 5 *****/ 									// 0.41, 0.57, 0.74, 0.87
+		//1:1 0.73 gave 230 and should be 236 * (done)
+		//2:1 0.685 gave 175 and should be 172 * (done)
+		//4:1 0.643 gave 108 and should be 104 * (done)
+		//8:1 0.62 gave 54 and should be 52 * (done)
+		
+		double[][] weights = new double[nparameters][nexperiments];
+		weights[0][0]=1.0;weights[0][1]=1.0;weights[0][2]=1.0;weights[0][3]=1.0;weights[0][4]=1.0; 	// feature 1, RESTING
+		weights[1][0]=1.1;weights[1][1]=1.1;weights[1][2]=1.1;weights[1][3]=1.1;weights[1][4]=1.1; 	// feature 2, IL15
+		weights[2][0]=0.9;weights[2][1]=0.9;weights[2][2]=0.9;weights[2][3]=0.9;weights[2][4]=0.9;  // feature 3, ULBP2
+		weights[3][0]=0.9;weights[3][1]=0.9;weights[3][2]=0.9;weights[3][3]=0.9;weights[3][4]=0.9; 	// feature 4, MICA
+		weights[4][0]=0.9;weights[4][1]=0.9;weights[4][2]=0.9;weights[4][3]=0.9;weights[4][4]=0.9; 	// feature 5, NKG2D
+		weights[5][0]=1.1;weights[5][1]=1.1;weights[5][2]=1.1;weights[5][3]=1.1;weights[5][4]=1.1; 	// feature 6, HLAI
+		
+		for (int i = 0; i < nparameters; i++) {
+			for (int j = 0; j < nexperiments; j++) {
+				weights[i][j] = weights[i][j]*((Global.RATIO*0.62)/(Global.RATIO));
+			}
+		}
+		
+		if (experiments[experiment_id][0] == 1)  
+		{
+			kill_chance   	= kill_chance   	* weights[0][0];
+			kill_distance 	= kill_distance 	* weights[0][1];
+			lose_distance 	= lose_distance 	* weights[0][2];
+			speed 			= speed 		  	* weights[0][3];
+			multiply_chance 	= multiply_chance * weights[0][4];
+		}
+		if (experiments[experiment_id][1] == 1) 
+		{
+			kill_chance   	= kill_chance   	* weights[1][0];
+			kill_distance 	= kill_distance 	* weights[1][1];
+			lose_distance 	= lose_distance 	* weights[1][2];
+			speed 			= speed 		  	* weights[1][3];
+			multiply_chance 	= multiply_chance * weights[1][4];
+		}
+		if (experiments[experiment_id][2] == 1)
+		{
+			kill_chance   	= kill_chance   	* weights[2][0];
+			kill_distance 	= kill_distance 	* weights[2][1];
+			lose_distance 	= lose_distance 	* weights[2][2];
+			speed 			= speed 		  	* weights[2][3];
+			multiply_chance 	= multiply_chance * weights[2][4];
+		}
+		if (experiments[experiment_id][3] == 1)
+		{
+			kill_chance   	= kill_chance   	* weights[3][0];
+			kill_distance 	= kill_distance 	* weights[3][1];
+			lose_distance 	= lose_distance 	* weights[3][2];
+			speed 			= speed 		  	* weights[3][3];
+			multiply_chance 	= multiply_chance * weights[3][4];
+		}
+		if (experiments[experiment_id][4] == 1)
+		{
+			kill_chance   	= kill_chance   	* weights[4][0];
+			kill_distance 	= kill_distance 	* weights[4][1];
+			lose_distance 	= lose_distance 	* weights[4][2];
+			speed 			= speed 		  	* weights[4][3];
+			multiply_chance 	= multiply_chance * weights[4][4];
+		}
+		if (experiments[experiment_id][5] == 1)
+		{
+			kill_chance   	= kill_chance   	* weights[5][0];
+			kill_distance 	= kill_distance 	* weights[5][1];
+			lose_distance 	= lose_distance 	* weights[5][2];
+			speed 			= speed 		  	* weights[5][3];
+			multiply_chance 	= multiply_chance * weights[5][4];
+		}
+		
+		
 	}
 
 	public void updateCCellsWithinDistance (double distance) {

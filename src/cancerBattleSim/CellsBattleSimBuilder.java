@@ -18,11 +18,13 @@ import repast.simphony.space.grid.WrapAroundBorders;
 
 public class CellsBattleSimBuilder implements ContextBuilder<Object> {
 
+	private int xDim = 15;
+	private int yDim = 15;
+	private int zDim = 15;
+	
 	@Override
 	public Context build(Context<Object> context) {
 		context.setId("CancerBattleSim");
-		
-		int dim = 20;
 		
 		ContinuousSpaceFactory spaceFactory =
 				ContinuousSpaceFactoryFinder.createContinuousSpaceFactory(null);
@@ -30,13 +32,13 @@ public class CellsBattleSimBuilder implements ContextBuilder<Object> {
 				spaceFactory.createContinuousSpace("space", context,
 						new RandomCartesianAdder<Object>(),
 						new repast.simphony.space.continuous.WrapAroundBorders(),
-						dim, dim, dim);
+						xDim, yDim, zDim);
 		
 		GridFactory gridFactory = GridFactoryFinder.createGridFactory(null);
 		Grid<Object> grid = gridFactory.createGrid("grid", context,
 				new GridBuilderParameters<Object>(new WrapAroundBorders(),
 						new SimpleGridAdder<Object>(),
-						true, dim, dim, dim));
+						true, xDim, yDim, zDim));
 		
 		// Creation of new Cells and adding it to the simulation space
 		Parameters params = RunEnvironment.getInstance().getParameters();
