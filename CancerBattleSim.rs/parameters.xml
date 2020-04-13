@@ -6,6 +6,12 @@
 						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
 									
 		/>
+				<parameter name="cells_ratio" displayName="Ratio NKCells/CCells" type="float" 
+						defaultValue="8.0" 
+						isReadOnly="false" 
+						converter="repast.simphony.parameter.StringConverterFactory$FloatConverter"
+									
+		/>
 				<parameter name="nkcell_count" displayName="Count NKCell" type="int" 
 						defaultValue="3200" 
 						isReadOnly="false" 

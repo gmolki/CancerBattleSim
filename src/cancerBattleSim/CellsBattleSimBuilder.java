@@ -18,51 +18,73 @@ import repast.simphony.space.grid.WrapAroundBorders;
 
 public class CellsBattleSimBuilder implements ContextBuilder<Object> {
 
-	private int xDim = 15;
-	private int yDim = 15;
-	private int zDim = 15;
-	
+	private int xDim = 40,
+			yDim = 40,
+			zDim = 4,
+			ncellCount = 0,
+			nkcellCount = 0,
+			ccellCount = 0;
+
+	private ContinuousSpace<Object> space;
+	private Grid<Object> grid;
+
 	@Override
 	public Context build(Context<Object> context) {
 		context.setId("CancerBattleSim");
-		
+
 		ContinuousSpaceFactory spaceFactory =
 				ContinuousSpaceFactoryFinder.createContinuousSpaceFactory(null);
-		ContinuousSpace<Object> space = 
+		space = 
 				spaceFactory.createContinuousSpace("space", context,
 						new RandomCartesianAdder<Object>(),
 						new repast.simphony.space.continuous.WrapAroundBorders(),
 						xDim, yDim, zDim);
-		
+
 		GridFactory gridFactory = GridFactoryFinder.createGridFactory(null);
-		Grid<Object> grid = gridFactory.createGrid("grid", context,
+		grid = gridFactory.createGrid("grid", context,
 				new GridBuilderParameters<Object>(new WrapAroundBorders(),
 						new SimpleGridAdder<Object>(),
 						true, xDim, yDim, zDim));
-		
+
 		// Creation of new Cells and adding it to the simulation space
+		context = createCellsForRatio(context);
+
+		return context;
+	}
+
+	private Context<Object> createCellsForRatio(Context<Object> context) {
 		Parameters params = RunEnvironment.getInstance().getParameters();
-		int ccellCount = params.getInteger("ccell_count");
+		Global.RATIO = params.getFloat("cells_ratio");
+
+		calculateCellsForRatio();
+
+		params.setValue("ccell_count", ccellCount);
 		for (int i = 0; i < ccellCount; i++) {
 			context.add(new CCell(space, grid));
 		}
-		
-		int ncellCount = params.getInteger("ncell_count");
+
+		params.setValue("ncell_count", ncellCount);
 		for (int i = 0; i < ncellCount; i++) {
 			context.add(new NCell(space, grid));
 		}
-		
-		int nkellCount = params.getInteger("nkcell_count");
-		for (int i = 0; i < nkellCount; i++) {
+
+		params.setValue("nkcell_count", nkcellCount);
+		for (int i = 0; i < nkcellCount; i++) {
 			context.add(new NKCell(space, grid));
 		}
-		
+
 		for (Object cell : context) {
 			NdPoint pt = space.getLocation(cell);
 			grid.moveTo(cell, (int)pt.getX(), (int)pt.getY(), (int)pt.getZ());
 		}
-		
+
 		return context;
 	}
 
+	private void calculateCellsForRatio () {
+		int volume = xDim*yDim*zDim;
+
+		ccellCount = (int) (volume / (Global.RATIO + 1));
+		nkcellCount = volume - ccellCount;
+	}
 }
