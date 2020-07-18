@@ -1,10 +1,11 @@
 /**
- * 
+ *
  */
-package cancerBattleSim;
+package cells;
 
 import java.util.Random;
 
+import abstractClasses.Cell;
 import repast.simphony.context.Context;
 import repast.simphony.engine.schedule.ScheduledMethod;
 import repast.simphony.random.RandomHelper;
@@ -17,26 +18,31 @@ import repast.simphony.util.ContextUtils;
  * @author gerard.molina
  *
  */
-public class CCell {
+public class CCell extends Cell {
 	private ContinuousSpace<Object> space;
 	private Grid<Object> grid;
 
-	private enum Mode { MULTIPLY, MOVE, DEFEND, TRAVEL, ARRIVE, DIE };
+	private enum Mode {
+		MULTIPLY, MOVE, DEFEND, TRAVEL, ARRIVE, DIE
+	};
+
 	private Mode state;
 	private double speed, multiply_chance;
 	private String pattern;
 	private Random random;
+
 	public CCell(ContinuousSpace<Object> space, Grid<Object> grid) {
 		this.space = space;
 		this.grid = grid;
 		this.state = Mode.MOVE;
 		this.speed = 0.003;
 		this.pattern = "0000 0011";
-		this.multiply_chance = 0;//0.0006;
+		this.multiply_chance = 0;// 0.0006;
 		this.random = new Random();
 	}
 
-	@ScheduledMethod(start = 1, interval = 1, shuffle=true)
+	@Override
+	@ScheduledMethod(start = 1, interval = 1, shuffle = true)
 	public void step() {
 		switch (state) {
 		case MULTIPLY:
@@ -63,37 +69,46 @@ public class CCell {
 		}
 	}
 
-	private void multiply() {
+	@Override
+	public void move() {
+		if (random.nextFloat() < multiply_chance) {
+			state = Mode.MULTIPLY;
+		}
+		moveTowards(this, null, speed, space, grid);
+
+	}
+	
+	@Override
+	public void multiply() {
 		NdPoint location = space.getLocation(this);
 		Context<Object> context = ContextUtils.getContext(this);
 		CCell newCCell = new CCell(space, grid);
 		context.add(newCCell);
-		space.moveTo(newCCell,
-				location.getX(),
-				location.getY(),
-				location.getZ());
+		space.moveTo(newCCell, location.getX(), location.getY(), location.getZ());
 
 		NdPoint newCCellLocation = space.getLocation(newCCell);
 
-		grid.moveTo(newCCell, 
-				(int) newCCellLocation.getX(), 
-				(int) newCCellLocation.getY(), 
+		grid.moveTo(newCCell, (int) newCCellLocation.getX(), (int) newCCellLocation.getY(),
 				(int) newCCellLocation.getZ());
 
 		state = Mode.MOVE;
 	}
 
-	private void move() {
-		if (random.nextFloat() < multiply_chance) {
-			state = Mode.MULTIPLY;
-		}
-		Global.moveTowards(this, null, speed, space, grid);
-
+	@Override
+	protected void defend() {
+		// TODO Auto-generated method stub
+		
 	}
 
-	private void defend() { }
-	private void travel() { }
-	private void arrive() { }
-	private void die() { }
+	@Override
+	protected void travel() {
+		// TODO Auto-generated method stub
+		
+	}
 
+	@Override
+	protected void arrive() {
+		// TODO Auto-generated method stub
+		
+	}
 }

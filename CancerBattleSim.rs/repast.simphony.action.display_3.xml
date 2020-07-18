@@ -3,30 +3,30 @@
   <type>3D</type>
   <styles>
     <entry>
-      <string>cancerBattleSim.CCell</string>
+      <string>cells.CCell</string>
       <string>repast.simphony.visualization.editedStyle.EditedStyle3D</string>
     </entry>
     <entry>
-      <string>cancerBattleSim.NCell</string>
+      <string>cells.NCell</string>
       <string>repast.simphony.visualization.editedStyle.EditedStyle3D</string>
     </entry>
     <entry>
-      <string>cancerBattleSim.NKCell</string>
+      <string>cells.NKCell</string>
       <string>repast.simphony.visualization.editedStyle.EditedStyle3D</string>
     </entry>
   </styles>
   <editedStyles>
     <entry>
-      <string>cancerBattleSim.CCell</string>
-      <string>cancerBattleSim.CCell.style_1.xml</string>
+      <string>cells.CCell</string>
+      <string>cells.CCell.style_1.xml</string>
     </entry>
     <entry>
-      <string>cancerBattleSim.NCell</string>
-      <string>cancerBattleSim.NCell.style_1.xml</string>
+      <string>cells.NCell</string>
+      <string>cells.NCell.style_1.xml</string>
     </entry>
     <entry>
-      <string>cancerBattleSim.NKCell</string>
-      <string>cancerBattleSim.NKCell.style_1.xml</string>
+      <string>cells.NKCell</string>
+      <string>cells.NKCell.style_1.xml</string>
     </entry>
   </editedStyles>
   <netStyles/>
@@ -46,15 +46,15 @@
   <layoutInterval>0</layoutInterval>
   <layerOrder>
     <entry>
-      <string>cancerBattleSim.CCell</string>
+      <string>cells.CCell</string>
       <int>2</int>
     </entry>
     <entry>
-      <string>cancerBattleSim.NCell</string>
+      <string>cells.NCell</string>
       <int>1</int>
     </entry>
     <entry>
-      <string>cancerBattleSim.NKCell</string>
+      <string>cells.NKCell</string>
       <int>0</int>
     </entry>
   </layerOrder>
