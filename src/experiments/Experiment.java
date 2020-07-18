@@ -47,17 +47,12 @@ public class Experiment {
 	private double nk_cell_features[] = new double[NUM_CELL_FEATURES];
 	private int control_parameters[] = new int[NUM_CONTROL_PARAMETERS];
 	private double weights[] = new double[NUM_CONTROL_PARAMETERS]; // Describe how control parameters affect to cell
-																	// features
-
+																	// feature
 	public Experiment(Context<Object> context, int resting, int il15, int ulbp2, int mica, int nkg2d, int hlai) {
 		this.context = context;
 		setControlParameters(resting, il15, ulbp2, mica, nkg2d, hlai);
+		setWeights(0.345);
 		setNKCellFeatures();
-		setWeights();
-	}
-
-	public Context<Object> setExperiment(ContinuousSpace<Object> space, Grid<Object> grid) {
-		return createCellsForRatio(space, grid);
 	}
 
 	public int getxDim() {
@@ -70,6 +65,11 @@ public class Experiment {
 
 	public int getzDim() {
 		return zDim;
+	}
+
+	public Context<Object> setExperiment(ContinuousSpace<Object> space, Grid<Object> grid) {
+		setNKCellWeightedFeaturesValues();
+		return createCellsForRatio(space, grid);
 	}
 
 	// PRIVATE
@@ -90,15 +90,27 @@ public class Experiment {
 		control_parameters[HLAI] = hlai;
 	}
 
-	private void setWeights() {
-		weights[RESTING] = 1.0;
-		weights[IL15] = 1.1;
-		weights[ULBP2] = 0.9;
-		weights[MICA] = 0.9;
-		weights[NKG2D] = 0.9;
-		weights[HLAI] = 1.1;
+	private void setWeights(double weight) {
+		weights[RESTING] = 1.0 * weight;
+		weights[IL15] = 1.1 * weight;
+		weights[ULBP2] = 0.9 * weight;
+		weights[MICA] = 0.9 * weight;
+		weights[NKG2D] = 0.9 * weight;
+		weights[HLAI] = 1.1 * weight;
 	}
 
+	private void setNKCellWeightedFeaturesValues() {
+		for (int i = 0; i < NUM_CONTROL_PARAMETERS; i++) {
+			if(control_parameters[i] == 1) {
+				nk_cell_features[KILL_CHANCE] = nk_cell_features[KILL_CHANCE] * weights[i];
+				nk_cell_features[KILL_DISTANCE] = nk_cell_features[KILL_DISTANCE] * weights[i];
+				nk_cell_features[LOSE_DISTANCE] = nk_cell_features[LOSE_DISTANCE] * weights[i];
+				nk_cell_features[SPEED] = nk_cell_features[SPEED] * weights[i];
+				nk_cell_features[MULTIPLY_CHANCE] = nk_cell_features[MULTIPLY_CHANCE] * weights[i];
+			}
+		}
+	}
+	
 	/**
 	 * Creation of new Cells and adding it to the simulation space
 	 * 

@@ -26,6 +26,7 @@ public abstract class Cell {
 	protected ContinuousSpace<Object> space;
 	protected Grid<Object> grid;
 
+	@SuppressWarnings("unchecked")
 	protected void die() {
 		Context<Object> context = ContextUtils.getContext(this);
 		context.remove(this);
