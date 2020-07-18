@@ -28,45 +28,31 @@ public class NKCell extends Cell {
 	}
 
 	private Mode state = Mode.MOVE;
-	private double speed = 0.01;
-	private double multiply_chance = 0.0006;
-	private double kill_distance = 0.5;
-	private double lose_distance = 1.0;
-	private double kill_chance = 1.0;
+	private double speed;
+	private double multiply_chance;
+	private double kill_distance;
+	private double lose_distance;
+	private double kill_chance;
 	private int nsteps_no_ccells = 0;
 	private int nsteps_noccells_for_dormant = 2;
 	private int nsteps_with_ccells = 0;
 	private int nsteps_with_ccells_for_wakeup = 2;
 	// private String pattern = "0000 0010";
-	// private int born = 0;
-	// private int nccells = 0;
-
-	/******** EXPERIMENTAL CONTROL PARAMETERS *******/
-	private int RATIO = 1;
-	private double RESTING = 0.0;
-	private final int RESTING_r = 0;
-	private double IL15 = 0.0;
-	private final int IL15_r = 1;
-	private double NKG2D = 0.0;
-	private final int NKG2D_r = 2;
-	private double MICA = 0.0;
-	private final int MICA_r = 3;
-	private double ULBP2 = 0.0;
-	private final int ULBP2_r = 4;
-	private double HLAI = 1.0;
-	private final int HLAI_r = 5;
-	/**********************************************/
 
 	private CCell target_ccell = null;
 	private List<CCell> neighbor_ccells = new ArrayList<CCell>();
 
 	private Random random = new Random();
 
-	public NKCell(ContinuousSpace<Object> space, Grid<Object> grid) {
+	public NKCell(ContinuousSpace<Object> space, Grid<Object> grid, double kill_chance, double kill_distance,
+			double lose_distance, double speed, double multiply_chance) {
 		this.space = space;
 		this.grid = grid;
-
-		this.setExperiment(4);
+		setKill_chance(kill_chance);
+		setKill_distance(kill_distance);
+		setLose_distance(lose_distance);
+		setSpeed(speed);
+		setMultiply_chance(multiply_chance);
 	}
 
 	@ScheduledMethod(start = 1, interval = 1, shuffle = true)
@@ -116,6 +102,46 @@ public class NKCell extends Cell {
 		}
 	}
 
+	public double getSpeed() {
+		return speed;
+	}
+
+	public void setSpeed(double speed) {
+		this.speed = speed;
+	}
+
+	public double getMultiply_chance() {
+		return multiply_chance;
+	}
+
+	public void setMultiply_chance(double multiply_chance) {
+		this.multiply_chance = multiply_chance;
+	}
+
+	public double getKill_distance() {
+		return kill_distance;
+	}
+
+	public void setKill_distance(double kill_distance) {
+		this.kill_distance = kill_distance;
+	}
+
+	public double getLose_distance() {
+		return lose_distance;
+	}
+
+	public void setLose_distance(double lose_distance) {
+		this.lose_distance = lose_distance;
+	}
+
+	public double getKill_chance() {
+		return kill_chance;
+	}
+
+	public void setKill_chance(double kill_chance) {
+		this.kill_chance = kill_chance;
+	}
+
 	private void learn() {
 		state = Mode.MOVE;
 	}
@@ -139,7 +165,8 @@ public class NKCell extends Cell {
 	public void multiply() {
 		NdPoint location = space.getLocation(this);
 		Context<Object> context = ContextUtils.getContext(this);
-		NKCell newNKell = new NKCell(space, grid);
+		NKCell newNKell = new NKCell(space, grid, getKill_chance(), getKill_distance(), getLose_distance(), getSpeed(),
+				getMultiply_chance());
 		context.add(newNKell);
 
 		space.moveTo(newNKell, location.getX(), location.getY(), location.getZ());
@@ -211,10 +238,12 @@ public class NKCell extends Cell {
 
 		int nexperiments = 5, nparameters = 6;
 		/*
-		 * EXPERIMENT RESTING IL15 ULBP2 MICA NKG2D HLAI RATIOS TARGETS (per ratio) 1 1
-		 * 0 0 0 0 0 1,2,4,8 0.14, 0.16, 0.19, 0.26 2 0 1 0 0 0 0 0.19, 0.27, 0.40, 0.45
-		 * 3 0 0 1 1 1 0 0.10, 0.10, 0.11, 0.13 4 0 0 0 0 0 1 0.42, 0.55, 0.66, 0.73 5 0
-		 * 1 0 0 0 1 0.41, 0.57, 0.74, 0.87
+		 * EXPERIMENT RESTING IL15 ULBP2 MICA NKG2D HLAI RATIOS TARGETS (per ratio)
+		 * 1 1 0 0 0 0 0 1,2,4,8 0.14, 0.16, 0.19, 0.26 
+		 * 2 0 1 0 0 0 0 0.19, 0.27, 0.40, 0.45
+		 * 3 0 0 1 1 1 0 0.10, 0.10, 0.11, 0.13 
+		 * 4 0 0 0 0 0 1 0.42, 0.55, 0.66, 0.73 
+		 * 5 0 1 0 0 0 1 0.41, 0.57, 0.74, 0.87
 		 */
 
 		int[][] experiments = new int[nexperiments][nparameters];
@@ -379,18 +408,18 @@ public class NKCell extends Cell {
 	@Override
 	protected void defend() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	protected void travel() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	protected void arrive() {
 		// TODO Auto-generated method stub
-		
+
 	}
 }
