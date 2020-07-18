@@ -1,4 +1,4 @@
 <repast.simphony.userpanel.ui.DefaultUserPanelDescriptor simphonyVersion="2.7.0">
   <name>Custom Panel</name>
-  <userPanelCreator>cancerBattleSim.UserPanel</userPanelCreator>
+  <userPanelCreator>utils.UserPanel</userPanelCreator>
 </repast.simphony.userpanel.ui.DefaultUserPanelDescriptor>

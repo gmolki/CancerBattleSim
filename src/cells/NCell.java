@@ -1,7 +1,8 @@
-package cancerBattleSim;
+package cells;
 
 import java.util.Random;
 
+import abstractClasses.Cell;
 import repast.simphony.context.Context;
 import repast.simphony.engine.schedule.ScheduledMethod;
 import repast.simphony.random.RandomHelper;
@@ -10,11 +11,14 @@ import repast.simphony.space.continuous.NdPoint;
 import repast.simphony.space.grid.Grid;
 import repast.simphony.util.ContextUtils;
 
-public class NCell {
+public class NCell extends Cell {
 	private ContinuousSpace<Object> space;
 	private Grid<Object> grid;
 
-	private enum Mode { MOVE, MULTIPLY }
+	private enum Mode {
+		MOVE, MULTIPLY
+	}
+
 	private Mode state;
 	private double speed, multiply_chance;
 	private String pattern;
@@ -30,8 +34,9 @@ public class NCell {
 		this.random = new Random();
 	}
 
-	@ScheduledMethod(start = 1, interval = 1, shuffle=true)
-	private void step () {
+	@Override
+	@ScheduledMethod(start = 1, interval = 1, shuffle = true)
+	public void step() {
 		switch (this.state) {
 		case MULTIPLY:
 			multiply();
@@ -45,31 +50,45 @@ public class NCell {
 		}
 	}
 
-	private void move () {
+	@Override
+	public void move() {
 		if (random.nextFloat() < multiply_chance) {
 			this.state = Mode.MULTIPLY;
 		}
-		Global.moveTowards(this, null, speed, space, grid);
+		moveTowards(this, null, speed, space, grid);
 
 	}
 
-	private void multiply () {
+	@Override
+	public void multiply() {
 		System.out.println("Multiply");
 		NdPoint location = space.getLocation(this);
 		Context<Object> context = ContextUtils.getContext(this);
 		NCell newNCell = new NCell(space, grid);
 		context.add(newNCell);
-		space.moveTo(newNCell,
-				location.getX(),
-				location.getY(),
-				location.getZ());
+		space.moveTo(newNCell, location.getX(), location.getY(), location.getZ());
 		NdPoint newCCellLocation = space.getLocation(newNCell);
-		grid.moveTo(newNCell,
-				(int)newCCellLocation.getX(),
-				(int)newCCellLocation.getY(),
-				(int)newCCellLocation.getZ());
+		grid.moveTo(newNCell, (int) newCCellLocation.getX(), (int) newCCellLocation.getY(),
+				(int) newCCellLocation.getZ());
 		state = Mode.MOVE;
 	}
 
+	@Override
+	protected void defend() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	protected void travel() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	protected void arrive() {
+		// TODO Auto-generated method stub
+		
+	}
 
 }
