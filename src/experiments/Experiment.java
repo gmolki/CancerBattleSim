@@ -101,11 +101,13 @@ public class Experiment {
 
 	private void setNKCellWeightedFeaturesValues() {
 		for (int i = 0; i < NUM_CONTROL_PARAMETERS; i++) {
-			nk_cell_features[KILL_CHANCE] = control_parameters[i] * nk_cell_features[KILL_CHANCE] * weights[i];
-			nk_cell_features[KILL_DISTANCE] = control_parameters[i] * nk_cell_features[KILL_DISTANCE] * weights[i];
-			nk_cell_features[LOSE_DISTANCE] = control_parameters[i] * nk_cell_features[LOSE_DISTANCE] * weights[i];
-			nk_cell_features[SPEED] = control_parameters[i] * nk_cell_features[SPEED] * weights[i];
-			nk_cell_features[MULTIPLY_CHANCE] = control_parameters[i] * nk_cell_features[MULTIPLY_CHANCE] * weights[i];
+			if(control_parameters[i] == 1) {
+				nk_cell_features[KILL_CHANCE] = nk_cell_features[KILL_CHANCE] * weights[i];
+				nk_cell_features[KILL_DISTANCE] = nk_cell_features[KILL_DISTANCE] * weights[i];
+				nk_cell_features[LOSE_DISTANCE] = nk_cell_features[LOSE_DISTANCE] * weights[i];
+				nk_cell_features[SPEED] = nk_cell_features[SPEED] * weights[i];
+				nk_cell_features[MULTIPLY_CHANCE] = nk_cell_features[MULTIPLY_CHANCE] * weights[i];
+			}
 		}
 	}
 	
