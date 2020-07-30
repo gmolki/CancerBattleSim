@@ -1,11 +1,18 @@
 package experiments;
 
+import java.io.File;
+import java.io.IOException;
+
 import cells.CCell;
 import cells.NCell;
 import cells.NKCell;
+import repast.simphony.batch.InstanceRunner;
+import repast.simphony.batch.OneRunBatchRunner;
+import repast.simphony.batch.parameter.ParameterLineParser;
 import repast.simphony.context.Context;
 import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.parameter.Parameters;
+import repast.simphony.scenario.ScenarioLoadException;
 import repast.simphony.space.continuous.ContinuousSpace;
 import repast.simphony.space.continuous.NdPoint;
 import repast.simphony.space.grid.Grid;
@@ -19,6 +26,7 @@ public class Experiment {
 	private int ncellCount = 0;
 	private int nkcellCount = 0;
 	private int ccellCount = 0;
+	private boolean isCalculating = true;
 	/******* CELL FEATURES *******/
 	private final int KILL_CHANCE = 0;
 	private final int KILL_DISTANCE = 1;
@@ -46,10 +54,14 @@ public class Experiment {
 
 	private double nk_cell_features[] = new double[NUM_CELL_FEATURES];
 	private int control_parameters[] = new int[NUM_CONTROL_PARAMETERS];
-	private double weights[] = new double[NUM_CONTROL_PARAMETERS]; // Describe how control parameters affect to cell
-																	// feature
+	private double weights[] = new double[NUM_CONTROL_PARAMETERS]; // Describe how control parameters affect to cell feature
+
+	private Parameters experiment_params;
+	
 	public Experiment(Context<Object> context, int resting, int il15, int ulbp2, int mica, int nkg2d, int hlai) {
 		this.context = context;
+		this.experiment_params = RunEnvironment.getInstance().getParameters();
+		
 		setControlParameters(resting, il15, ulbp2, mica, nkg2d, hlai);
 		setWeights(0.345);
 		setNKCellFeatures();
@@ -66,9 +78,22 @@ public class Experiment {
 	public int getzDim() {
 		return zDim;
 	}
-
+	
+	public boolean isCalculating() {
+		return isCalculating;
+	}
+	
+	public void setCalculatingState(boolean state) {
+		this.isCalculating = state;
+	}
+	
 	public Context<Object> setExperiment(ContinuousSpace<Object> space, Grid<Object> grid) {
 		setNKCellWeightedFeaturesValues();
+		if(experiment_params.getInteger("weight_calculation") == 0) {
+			executeRunFor200Steps(1);
+		}else {
+			RunEnvironment.getInstance().endAt(200);
+		}
 		return createCellsForRatio(space, grid);
 	}
 
@@ -111,6 +136,33 @@ public class Experiment {
 		}
 	}
 	
+	private double[] executeRunFor200Steps(int run_num) {
+		File scenario = new File("CancerBattleSim.rs");
+		File params_file = new File("batch/batch_params.xml");
+		this.setCalculatingState(true);
+		try {
+			ParameterLineParser parameter_parser = new ParameterLineParser(params_file.toURI());
+			Parameters params = parameter_parser.parse(buildParamsLine());
+			OneRunBatchRunner runner = new OneRunBatchRunner(scenario);
+			runner.run(run_num, params);
+			// Ejecutar OneBatchRunner con los parametros y devolver resultados
+		} catch (ScenarioLoadException | IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	private String buildParamsLine() {
+		String run = "1\t";
+		String cells_ratio = "cells_ratio\t" + Global.RATIO + ",";
+		String nkcell_count = "nkcell_count\t" + nkcellCount + ",";
+		String ccell_count = "ccell_count\t" + ccellCount + ",";
+		String ncell_count = "ncell_count\t" + ncellCount + ",";
+		String weight_calculation = "weight_calculation\t1";
+		
+		return run + cells_ratio + nkcell_count + ccell_count + ncell_count + weight_calculation;
+	}
+	
 	/**
 	 * Creation of new Cells and adding it to the simulation space
 	 * 
@@ -118,22 +170,21 @@ public class Experiment {
 	 * @return context with new Cells into it
 	 */
 	private Context<Object> createCellsForRatio(ContinuousSpace<Object> space, Grid<Object> grid) {
-		Parameters params = RunEnvironment.getInstance().getParameters();
-		Global.RATIO = params.getFloat("cells_ratio");
+		Global.RATIO = experiment_params.getFloat("cells_ratio");
 
 		calculateCellsForRatio();
 
-		params.setValue("ccell_count", ccellCount);
+		experiment_params.setValue("ccell_count", ccellCount);
 		for (int i = 0; i < ccellCount; i++) {
 			context.add(new CCell(space, grid));
 		}
 
-		params.setValue("ncell_count", ncellCount);
+		experiment_params.setValue("ncell_count", ncellCount);
 		for (int i = 0; i < ncellCount; i++) {
 			context.add(new NCell(space, grid));
 		}
 
-		params.setValue("nkcell_count", nkcellCount);
+		experiment_params.setValue("nkcell_count", nkcellCount);
 		for (int i = 0; i < nkcellCount; i++) {
 			context.add(new NKCell(space, grid, nk_cell_features[KILL_CHANCE], nk_cell_features[KILL_DISTANCE],
 					nk_cell_features[LOSE_DISTANCE], nk_cell_features[SPEED], nk_cell_features[MULTIPLY_CHANCE]));

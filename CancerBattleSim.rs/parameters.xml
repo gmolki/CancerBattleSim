@@ -18,6 +18,13 @@
 						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
 									
 		/>
+				<parameter name="weight_calculation" displayName="Weight Calculation" type="int" 
+						defaultValue="0" 
+						isReadOnly="false" 
+						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
+									values="0 1 "
+						
+		/>
 				<parameter name="ccell_count" displayName="Count CCell" type="int" 
 						defaultValue="400" 
 						isReadOnly="false" 

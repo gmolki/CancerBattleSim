@@ -10,7 +10,6 @@ Thumbs.db
 
 # Automatically created folders #
 #################################
-batch/
 bin/
 data/
 debug.log/
@@ -27,7 +26,8 @@ repast-licenses/
 
 # Automatically created files #
 ###############################
-debug.log
+debug.log*
+launch.props*
 license.txt
 MessageCenter.log4j.properties
 model_description.txt
