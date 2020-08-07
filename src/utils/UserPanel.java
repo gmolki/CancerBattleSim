@@ -28,39 +28,39 @@ public class UserPanel implements UserPanelCreator {
 	public JPanel createPanel() {
 		JPanel panel = new JPanel(new GridBagLayout());
 
-		GridBagConstraints constraints = new GridBagConstraints();
-		constraints.anchor = GridBagConstraints.WEST;
-		constraints.insets = new Insets(10, 10, 10, 10);
-
-		Parameters params = RunEnvironment.getInstance().getParameters();
-
-		// add components to the panel
-		constraints.gridx = 0;
-		constraints.gridy = 0;
-		panel.add(label_ccells_count, constraints);
-
-		constraints.gridx = 1;
-		int ccellCount = params.getInteger("ccell_count");
-		ccells_count.setText(String.valueOf(ccellCount));
-		panel.add(ccells_count, constraints);
-
-		constraints.gridx = 0;
-		constraints.gridy = 1;
-		panel.add(label_ncells_count, constraints);
-
-		constraints.gridx = 1;
-		int ncellCount = params.getInteger("ncell_count");
-		ncells_count.setText(String.valueOf(ncellCount));
-		panel.add(ncells_count, constraints);
-
-		constraints.gridx = 0;
-		constraints.gridy = 2;
-		panel.add(label_nkcells_count, constraints);
-
-		constraints.gridx = 1;
-		int nkcellCount = params.getInteger("nkcell_count");
-		nkcells_count.setText(String.valueOf(nkcellCount));
-		panel.add(nkcells_count, constraints);
+//		GridBagConstraints constraints = new GridBagConstraints();
+//		constraints.anchor = GridBagConstraints.WEST;
+//		constraints.insets = new Insets(10, 10, 10, 10);
+//
+//		Parameters params = RunEnvironment.getInstance().getParameters();
+//
+//		// add components to the panel
+//		constraints.gridx = 0;
+//		constraints.gridy = 0;
+//		panel.add(label_ccells_count, constraints);
+//
+//		constraints.gridx = 1;
+//		int ccellCount = params.getInteger("ccell_count");
+//		ccells_count.setText(String.valueOf(ccellCount));
+//		panel.add(ccells_count, constraints);
+//
+//		constraints.gridx = 0;
+//		constraints.gridy = 1;
+//		panel.add(label_ncells_count, constraints);
+//
+//		constraints.gridx = 1;
+//		int ncellCount = params.getInteger("ncell_count");
+//		ncells_count.setText(String.valueOf(ncellCount));
+//		panel.add(ncells_count, constraints);
+//
+//		constraints.gridx = 0;
+//		constraints.gridy = 2;
+//		panel.add(label_nkcells_count, constraints);
+//
+//		constraints.gridx = 1;
+//		int nkcellCount = params.getInteger("nkcell_count");
+//		nkcells_count.setText(String.valueOf(nkcellCount));
+//		panel.add(nkcells_count, constraints);
 
 		return panel;
 	}

@@ -3,6 +3,8 @@ package experiments;
 import cells.CCell;
 import cells.NCell;
 import cells.NKCell;
+import repast.simphony.batch.BatchRunner;
+import repast.simphony.batch.InstanceRunner;
 import repast.simphony.context.Context;
 import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.parameter.Parameters;
@@ -13,6 +15,7 @@ import utils.Global;
 
 public class Experiment {
 	private Context<Object> context;
+	Parameters experiment_params;
 	private int xDim = 40;
 	private int yDim = 40;
 	private int zDim = 4;
@@ -34,7 +37,7 @@ public class Experiment {
 	private final int MICA = 3;
 	private final int NKG2D = 4;
 	private final int HLAI = 5;
-	private final int NUM_CONTROL_PARAMETERS = 6;
+	private final int NUM_control_parameters = 6;
 	/*****************************/
 	/****** NKCELL FEATURES ******/
 	private double nk_cell_speed = 0.01;
@@ -45,13 +48,16 @@ public class Experiment {
 	/*****************************/
 
 	private double nk_cell_features[] = new double[NUM_CELL_FEATURES];
-	private int control_parameters[] = new int[NUM_CONTROL_PARAMETERS];
-	private double weights[] = new double[NUM_CONTROL_PARAMETERS]; // Describe how control parameters affect to cell
+	private boolean control_parameters_activated[] = new boolean[NUM_control_parameters];
+	private double weights[] = new double[NUM_control_parameters]; // Describe how control parameters affect to cell
 																	// feature
-	public Experiment(Context<Object> context, int resting, int il15, int ulbp2, int mica, int nkg2d, int hlai) {
+
+	public Experiment(Context<Object> context, boolean resting, boolean il15, boolean ulbp2, boolean mica,
+			boolean nkg2d, boolean hlai) {
 		this.context = context;
+		experiment_params = RunEnvironment.getInstance().getParameters();
 		setControlParameters(resting, il15, ulbp2, mica, nkg2d, hlai);
-		setWeights(0.345);
+		setWeights();
 		setNKCellFeatures();
 	}
 
@@ -65,6 +71,14 @@ public class Experiment {
 
 	public int getzDim() {
 		return zDim;
+	}
+
+	public int getCCellCount() {
+		return ccellCount;
+	}
+
+	public int getNKCellCount() {
+		return nkcellCount;
 	}
 
 	public Context<Object> setExperiment(ContinuousSpace<Object> space, Grid<Object> grid) {
@@ -81,27 +95,28 @@ public class Experiment {
 		nk_cell_features[MULTIPLY_CHANCE] = nk_cell_multiply_chance;
 	}
 
-	private void setControlParameters(int resting, int il15, int ulbp2, int mica, int nkg2d, int hlai) {
-		control_parameters[RESTING] = resting;
-		control_parameters[IL15] = il15;
-		control_parameters[ULBP2] = ulbp2;
-		control_parameters[MICA] = mica;
-		control_parameters[NKG2D] = nkg2d;
-		control_parameters[HLAI] = hlai;
+	private void setControlParameters(boolean resting, boolean il15, boolean ulbp2, boolean mica, boolean nkg2d,
+			boolean hlai) {
+		control_parameters_activated[RESTING] = resting;
+		control_parameters_activated[IL15] = il15;
+		control_parameters_activated[ULBP2] = ulbp2;
+		control_parameters_activated[MICA] = mica;
+		control_parameters_activated[NKG2D] = nkg2d;
+		control_parameters_activated[HLAI] = hlai;
 	}
 
-	private void setWeights(double weight) {
-		weights[RESTING] = 1.0 * weight;
-		weights[IL15] = 1.1 * weight;
-		weights[ULBP2] = 0.9 * weight;
-		weights[MICA] = 0.9 * weight;
-		weights[NKG2D] = 0.9 * weight;
-		weights[HLAI] = 1.1 * weight;
+	private void setWeights() {
+		weights[RESTING] = 1.0 * experiment_params.getDouble("resting");
+		weights[IL15] = 1.1 * experiment_params.getDouble("il15");
+		weights[ULBP2] = 0.9 * experiment_params.getDouble("ulbp2");
+		weights[MICA] = 0.9 * experiment_params.getDouble("mica");
+		weights[NKG2D] = 0.9 * experiment_params.getDouble("nkg2d");
+		weights[HLAI] = 1.1 * experiment_params.getDouble("hlai");
 	}
 
 	private void setNKCellWeightedFeaturesValues() {
-		for (int i = 0; i < NUM_CONTROL_PARAMETERS; i++) {
-			if(control_parameters[i] == 1) {
+		for (int i = 0; i < NUM_control_parameters; i++) {
+			if (control_parameters_activated[i]) {
 				nk_cell_features[KILL_CHANCE] = nk_cell_features[KILL_CHANCE] * weights[i];
 				nk_cell_features[KILL_DISTANCE] = nk_cell_features[KILL_DISTANCE] * weights[i];
 				nk_cell_features[LOSE_DISTANCE] = nk_cell_features[LOSE_DISTANCE] * weights[i];
@@ -110,7 +125,7 @@ public class Experiment {
 			}
 		}
 	}
-	
+
 	/**
 	 * Creation of new Cells and adding it to the simulation space
 	 * 
@@ -118,22 +133,14 @@ public class Experiment {
 	 * @return context with new Cells into it
 	 */
 	private Context<Object> createCellsForRatio(ContinuousSpace<Object> space, Grid<Object> grid) {
-		Parameters params = RunEnvironment.getInstance().getParameters();
-		Global.RATIO = params.getFloat("cells_ratio");
+		Global.RATIO = experiment_params.getInteger("cells_ratio");
 
 		calculateCellsForRatio();
 
-		params.setValue("ccell_count", ccellCount);
 		for (int i = 0; i < ccellCount; i++) {
 			context.add(new CCell(space, grid));
 		}
-
-		params.setValue("ncell_count", ncellCount);
-		for (int i = 0; i < ncellCount; i++) {
-			context.add(new NCell(space, grid));
-		}
-
-		params.setValue("nkcell_count", nkcellCount);
+		
 		for (int i = 0; i < nkcellCount; i++) {
 			context.add(new NKCell(space, grid, nk_cell_features[KILL_CHANCE], nk_cell_features[KILL_DISTANCE],
 					nk_cell_features[LOSE_DISTANCE], nk_cell_features[SPEED], nk_cell_features[MULTIPLY_CHANCE]));
