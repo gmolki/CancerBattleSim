@@ -1,34 +1,101 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <parameters>
-					<parameter name="randomSeed" displayName="Default Random Seed" type="int" 
+					<parameter name="resting" displayName="RESTING Value" type="double" 
+						defaultValue="0.0" 
+						isReadOnly="false" 
+						converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
+									
+		/>
+				<parameter name="mica" displayName="MICA Value" type="double" 
+						defaultValue="0.0" 
+						isReadOnly="false" 
+						converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
+									
+		/>
+				<parameter name="ulbp2" displayName="ULBP2 Value" type="double" 
+						defaultValue="0.0" 
+						isReadOnly="false" 
+						converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
+									
+		/>
+				<parameter name="randomSeed" displayName="Default Random Seed" type="int" 
 						defaultValue="__NULL__"
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
 									
 		/>
-				<parameter name="cells_ratio" displayName="Ratio NKCells/CCells" type="float" 
-						defaultValue="8.0" 
+				<parameter name="resting_activation" displayName="RESTING Activation" type="boolean" 
+						defaultValue="false" 
 						isReadOnly="false" 
-						converter="repast.simphony.parameter.StringConverterFactory$FloatConverter"
+						converter="repast.simphony.parameter.StringConverterFactory$BooleanConverter"
+									values="false true "
+						
+		/>
+				<parameter name="hlai_activation" displayName="HLAI Activation" type="boolean" 
+						defaultValue="false" 
+						isReadOnly="false" 
+						converter="repast.simphony.parameter.StringConverterFactory$BooleanConverter"
+									values="false true "
+						
+		/>
+				<parameter name="il15" displayName="IL15 Value" type="double" 
+						defaultValue="0.0" 
+						isReadOnly="false" 
+						converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
 									
 		/>
-				<parameter name="nkcell_count" displayName="Count NKCell" type="int" 
-						defaultValue="3200" 
+				<parameter name="ulbp2_activation" displayName="ULBP2 Activation" type="boolean" 
+						defaultValue="false" 
+						isReadOnly="false" 
+						converter="repast.simphony.parameter.StringConverterFactory$BooleanConverter"
+									values="false true "
+						
+		/>
+				<parameter name="cells_ratio" displayName="0 - Ratio NKCells/CCells" type="int" 
+						defaultValue="8" 
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
 									
 		/>
-				<parameter name="ccell_count" displayName="Count CCell" type="int" 
-						defaultValue="400" 
+				<parameter name="nkg2d_activation" displayName="NKG2D Activation" type="boolean" 
+						defaultValue="false" 
 						isReadOnly="false" 
-						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
+						converter="repast.simphony.parameter.StringConverterFactory$BooleanConverter"
+									values="false true "
+						
+		/>
+				<parameter name="mica_activation" displayName="MICA Activation" type="boolean" 
+						defaultValue="false" 
+						isReadOnly="false" 
+						converter="repast.simphony.parameter.StringConverterFactory$BooleanConverter"
+									values="false true "
+						
+		/>
+				<parameter name="hlai" displayName="HLAI Value" type="double" 
+						defaultValue="0.0" 
+						isReadOnly="false" 
+						converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
 									
 		/>
-				<parameter name="ncell_count" displayName="Count NCell" type="int" 
-						defaultValue="0" 
+				<parameter name="nkg2d" displayName="NKG2D Value" type="double" 
+						defaultValue="0.0" 
 						isReadOnly="false" 
-						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
+						converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
 									
+		/>
+				<parameter name="il15_activation" displayName="IL15 Activation" type="boolean" 
+						defaultValue="false" 
+						isReadOnly="false" 
+						converter="repast.simphony.parameter.StringConverterFactory$BooleanConverter"
+									values="false true "
+						
+		/>
+				<parameter name="weight_calculation" displayName="Weight Calculation" type="boolean" 
+						defaultValue="false" 
+						isReadOnly="false" 
+						converter="repast.simphony.parameter.StringConverterFactory$BooleanConverter"
+									values="false true "
+						
 		/>
 		</parameters>
 

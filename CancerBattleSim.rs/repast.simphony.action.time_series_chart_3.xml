@@ -44,18 +44,6 @@
         </color>
       </SeriesData>
     </entry>
-    <entry>
-      <string>Remaining NCells</string>
-      <SeriesData>
-        <label>Remaining NCells</label>
-        <color>
-          <red>0</red>
-          <green>255</green>
-          <blue>0</blue>
-          <alpha>255</alpha>
-        </color>
-      </SeriesData>
-    </entry>
   </seriesIds>
   <dataValueIds/>
   <plotRangeLength>-1</plotRangeLength>
