@@ -2,6 +2,10 @@ package experiments;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.util.Map;
+
+import org.apache.commons.beanutils.BeanUtils;
 
 import repast.simphony.batch.parameter.ParameterLineParser;
 import repast.simphony.parameter.Parameters;
@@ -34,6 +38,14 @@ public class Run {
 		this.mica = 0.0;
 		this.il15 = 0.0;
 		this.cells_ratio = 1;
+	}
+	
+	public int getRepetitions() {
+		return stable_tick;
+	}
+	
+	public void setStableTick(int stable_tick) {
+		this.stable_tick = stable_tick;
 	}
 	
 	public int getStableTick() {
@@ -193,5 +205,17 @@ public class Run {
 		parameters += "randomSeed\t" + String.valueOf(1);
 
 		return parameters;
+	}
+	
+	public static Run fromParametersMap(Map<String, String> run_parameters) {
+		Run run = new Run();
+		for(Map.Entry<String, String> parameter : run_parameters.entrySet()) {
+			try {
+				BeanUtils.setProperty(run, parameter.getKey(), parameter.getValue());
+			} catch (IllegalAccessException | InvocationTargetException e) {
+				e.printStackTrace();
+			}
+		}
+		return run;
 	}
 }

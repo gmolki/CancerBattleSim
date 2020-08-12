@@ -35,6 +35,9 @@ public class CancerBattleSimRunner extends AbstractRunner {
 		this.parameters = parameters;
 	}
 
+	public CancerBattleSimRunner() {
+	}
+
 	public void load(File scenarioDir) throws Exception {
 		if (scenarioDir.exists()) {
 			BatchScenarioLoader loader = new BatchScenarioLoader(scenarioDir);
