@@ -2,6 +2,10 @@ package experiments;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.util.Map;
+
+import org.apache.commons.beanutils.BeanUtils;
 
 import repast.simphony.batch.parameter.ParameterLineParser;
 import repast.simphony.parameter.Parameters;
@@ -12,9 +16,9 @@ public class Run {
 	double resting, hlai, ulbp2, nkg2d, mica, il15;
 	int cells_ratio;
 	boolean weight_calculation = true;
-	
+
 	int stable_tick = 300; // Tick when runs are used to be stable
-	
+
 	/**
 	 * Set default run parameters. By default all control parameters are set to 0 an
 	 * deactivate.
@@ -35,7 +39,15 @@ public class Run {
 		this.il15 = 0.0;
 		this.cells_ratio = 1;
 	}
-	
+
+	public int getRepetitions() {
+		return stable_tick;
+	}
+
+	public void setStableTick(int stable_tick) {
+		this.stable_tick = stable_tick;
+	}
+
 	public int getStableTick() {
 		return stable_tick * 2;
 	}
@@ -159,7 +171,7 @@ public class Run {
 	public void setWeight_calculation(boolean weight_calculation) {
 		this.weight_calculation = weight_calculation;
 	}
-	
+
 	public Parameters getParameters() {
 		String params = this.getParametersString();
 		File fparams = new File("batch/batch_params.xml");
@@ -173,7 +185,7 @@ public class Run {
 			return null;
 		}
 	}
-	
+
 	public String getParametersString() {
 		String parameters = String.valueOf(getRun_number()) + "\t";
 		parameters += "resting_activation\t" + String.valueOf(isResting_activation()) + ",";
@@ -193,5 +205,36 @@ public class Run {
 		parameters += "randomSeed\t" + String.valueOf(1);
 
 		return parameters;
+	}
+
+	public void print() {
+		String parameters = "\nOptimal parameter values to experiment selected:\n";
+		parameters += "resting_activation:  " + String.valueOf(isResting_activation()) + "\n";
+		parameters += "hlai_activation:     " + String.valueOf(isHlai_activation()) + "\n";
+		parameters += "ulbp2_activation:    " + String.valueOf(isUlbp2_activation()) + "\n";
+		parameters += "nkg2d_activation:    " + String.valueOf(isNkg2d_activation()) + "\n";
+		parameters += "mica_activation:     " + String.valueOf(isMica_activation()) + "\n";
+		parameters += "il15_activation:     " + String.valueOf(isIl15_activation()) + "\n";
+		parameters += "resting:      " + String.valueOf(getResting()) + "\n";
+		parameters += "hlai:         " + String.valueOf(getHlai()) + "\n";
+		parameters += "ulbp2:        " + String.valueOf(getUlbp2()) + "\n";
+		parameters += "nkg2d:        " + String.valueOf(getNkg2d()) + "\n";
+		parameters += "mica:         " + String.valueOf(getMica()) + "\n";
+		parameters += "il15:         " + String.valueOf(getIl15()) + "\n";
+		parameters += "cells_ratio:  " + String.valueOf(getCells_ratio()) + "\n";
+
+		System.out.println(parameters);
+	}
+
+	public static Run fromParametersMap(Map<String, String> run_parameters) {
+		Run run = new Run();
+		for (Map.Entry<String, String> parameter : run_parameters.entrySet()) {
+			try {
+				BeanUtils.setProperty(run, parameter.getKey(), parameter.getValue());
+			} catch (IllegalAccessException | InvocationTargetException e) {
+				e.printStackTrace();
+			}
+		}
+		return run;
 	}
 }
