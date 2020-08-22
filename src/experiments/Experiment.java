@@ -1,10 +1,7 @@
 package experiments;
 
 import cells.CCell;
-import cells.NCell;
 import cells.NKCell;
-import repast.simphony.batch.BatchRunner;
-import repast.simphony.batch.InstanceRunner;
 import repast.simphony.context.Context;
 import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.parameter.Parameters;
@@ -16,10 +13,6 @@ import utils.Global;
 public class Experiment {
 	private Context<Object> context;
 	Parameters experiment_params;
-	private int xDim = 40;
-	private int yDim = 40;
-	private int zDim = 4;
-	private int ncellCount = 0;
 	private int nkcellCount = 0;
 	private int ccellCount = 0;
 	/******* CELL FEATURES *******/
@@ -40,11 +33,11 @@ public class Experiment {
 	private final int NUM_control_parameters = 6;
 	/*****************************/
 	/****** NKCELL FEATURES ******/
-	private double nk_cell_speed = 0.01;
-	private double nk_cell_multiply_chance = 0.0006;
-	private double nk_cell_kill_distance = 0.5;
-	private double nk_cell_lose_distance = 1.0;
-	private double nk_cell_kill_chance = 1.0;
+	private double nk_cell_speed = 0.005;
+	private double nk_cell_multiply_chance = 0.0003;
+	private double nk_cell_kill_distance = 0.01;
+	private double nk_cell_lose_distance = 0.02;
+	private double nk_cell_kill_chance = 0.02;
 	/*****************************/
 
 	private double nk_cell_features[] = new double[NUM_CELL_FEATURES];
@@ -59,18 +52,6 @@ public class Experiment {
 		setControlParameters(resting, il15, ulbp2, mica, nkg2d, hlai);
 		setWeights();
 		setNKCellFeatures();
-	}
-
-	public int getxDim() {
-		return xDim;
-	}
-
-	public int getyDim() {
-		return yDim;
-	}
-
-	public int getzDim() {
-		return zDim;
 	}
 
 	public int getCCellCount() {
@@ -106,7 +87,7 @@ public class Experiment {
 	}
 
 	private void setWeights() {
-		weights[RESTING] = 1.0 * experiment_params.getDouble("resting");
+		weights[RESTING] = 1 * experiment_params.getDouble("resting");
 		weights[IL15] = 1.1 * experiment_params.getDouble("il15");
 		weights[ULBP2] = 0.9 * experiment_params.getDouble("ulbp2");
 		weights[MICA] = 0.9 * experiment_params.getDouble("mica");
@@ -117,6 +98,7 @@ public class Experiment {
 	private void setNKCellWeightedFeaturesValues() {
 		for (int i = 0; i < NUM_control_parameters; i++) {
 			if (control_parameters_activated[i] && weights[i] != 0) {
+				System.out.println(String.valueOf(i));
 				nk_cell_features[KILL_CHANCE] = nk_cell_features[KILL_CHANCE] * weights[i];
 				nk_cell_features[KILL_DISTANCE] = nk_cell_features[KILL_DISTANCE] * weights[i];
 				nk_cell_features[LOSE_DISTANCE] = nk_cell_features[LOSE_DISTANCE] * weights[i];
@@ -155,9 +137,9 @@ public class Experiment {
 	}
 
 	private void calculateCellsForRatio() {
-		int volume = xDim * yDim * zDim;
+		int volume = Global.xDim * Global.yDim * Global.zDim;
 
-		ccellCount = (int) (volume / (Global.RATIO + 1));
+		ccellCount = (int) (volume / (experiment_params.getInteger("cells_ratio") + 1));
 		nkcellCount = volume - ccellCount;
 	}
 }

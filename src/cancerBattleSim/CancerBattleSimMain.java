@@ -14,31 +14,67 @@ import java.util.Scanner;
 import org.apache.commons.io.FileUtils;
 
 import experiments.Run;
+import utils.BatchController;
+import utils.Global;
 
 public class CancerBattleSimMain {
+	static File scenario_folder = new File("CancerBattleSim.rs");
+	static File output_folder = new File("output/runs");
 	static CancerBattleSimRunner runner;
+	static BatchController batch_controller;
+
+	static int stable_tick = 1000;
 	static List<Run> runs; // List containing all the runs that will be executed
+
+	// OPTIMAL PARAMETERS STORAGE
 	static Integer best_approach;
 	static Run best_run;
-
-	static File scenario_folder;
-	static File output_folder;
+	//
+	// CONTROL PARAMETERS
+	static final int RESTING = 0;
+	static final int HLAI = 1;
+	static final int ULBP2 = 2;
+	static final int NKG2D = 3;
+	static final int MICA = 4;
+	static final int IL15 = 5;
+	static boolean[] control_parameters; // Array containing which control parameters are activated
+	//
 	static Integer expected_ccells;
 	static int cells_ratio;
-	static int stable_tick;
 
-	static boolean resting_activation;
-	static boolean hlai_activation;
-	static boolean ulbp2_activation;
-	static boolean nkg2d_activation;
-	static boolean mica_activation;
-	static boolean il15_activation;
+	public static void main(String[] args) {
+		runForExperiment(3, 4);
 
+		batch_controller = new BatchController(control_parameters);
+
+		Run parent_run = setUpRun(1, stable_tick, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0); // First run with all values set at 0.0
+
+		calculateOptimalWeights(parent_run);
+
+		return;
+	}
+
+	static void calculateOptimalWeights(Run parent_run) {
+		Entry<Run, Integer> best_current_results = new SimpleEntry<Run, Integer>(parent_run, Integer.MAX_VALUE - 1);
+
+		do {
+			clearPreviousRuns();
+			generateNewRuns(best_current_results.getKey());
+			executeRuns(runs);
+			best_current_results = bestRunByApproach();
+			boolean is_improving = setBetterResults(best_current_results);
+
+			batch_controller.nextBatch(is_improving);
+		} while (batch_controller.getParameterIndex() < 6 && !isPerfectApproach());
+
+		printResults();
+	}
+	
 	/**
 	 * 
-	 * @return CancerBattleSimRunner object prepared to be initialized
+	 * @return CancerBattleSimRunner object ready to be initialized
 	 */
-	public static CancerBattleSimRunner setUpRunner(Run run) {
+	static CancerBattleSimRunner setUpRunner(Run run) {
 		CancerBattleSimRunner runner = new CancerBattleSimRunner(run.getParameters());
 		try {
 			runner.load(scenario_folder);
@@ -53,18 +89,18 @@ public class CancerBattleSimMain {
 	 * 
 	 * @return Run object with parameters loaded
 	 */
-	public static Run setUpRun(int run_number, int stable_tick, double resting, double hlai, double ulbp2, double nkg2d,
+	static Run setUpRun(int run_number, int stable_tick, double resting, double hlai, double ulbp2, double nkg2d,
 			double mica, double il15) {
 		Run run = new Run();
 		run.setRun_number(run_number);
 		run.setStableTick(stable_tick);
 		run.setCells_ratio(cells_ratio);
-		run.setResting_activation(resting_activation);
-		run.setHlai_activation(hlai_activation);
-		run.setUlbp2_activation(ulbp2_activation);
-		run.setNkg2d_activation(nkg2d_activation);
-		run.setMica_activation(mica_activation);
-		run.setIl15_activation(il15_activation);
+		run.setResting_activation(control_parameters[RESTING]);
+		run.setHlai_activation(control_parameters[HLAI]);
+		run.setUlbp2_activation(control_parameters[ULBP2]);
+		run.setNkg2d_activation(control_parameters[NKG2D]);
+		run.setMica_activation(control_parameters[MICA]);
+		run.setIl15_activation(control_parameters[IL15]);
 		run.setResting(resting);
 		run.setHlai(hlai);
 		run.setUlbp2(ulbp2);
@@ -75,11 +111,11 @@ public class CancerBattleSimMain {
 		return run;
 	}
 
-	public static void addRun(Run run) {
+	static void addRun(Run run) {
 		runs.add(run);
 	}
 
-	public static void executeRun(Run run) {
+	static void executeRun(Run run) {
 		runner.runInitialize(run.getParameters());
 
 		for (int run_ticks = 0; run_ticks < (run.getStableTick()); run_ticks++) {
@@ -91,7 +127,7 @@ public class CancerBattleSimMain {
 		runner.cleanUpRun();
 	}
 
-	private static void executeRuns(List<Run> runs) {
+	static void executeRuns(List<Run> runs) {
 		for (Run run : runs) {
 			runner = setUpRunner(run);
 
@@ -100,7 +136,7 @@ public class CancerBattleSimMain {
 		runner.cleanUpBatch(); // Clean runner after all runs complete
 	}
 
-	public static Map<Map<String, String>, Map<String, String>> getRunsResults(List<File> output_files,
+	static Map<Map<String, String>, Map<String, String>> getRunsResults(List<File> output_files,
 			List<Run> runs) {
 		Map<Map<String, String>, Map<String, String>> results = new HashMap<Map<String, String>, Map<String, String>>();
 		try {
@@ -127,60 +163,134 @@ public class CancerBattleSimMain {
 		return results;
 	}
 
-	public static void calculateOptimalWeights(Run parent_run) {
-		Entry<Run, Integer> best_current_results = new SimpleEntry<Run, Integer>(parent_run, Integer.MAX_VALUE - 1);
-
-		int weight = nextWeight(0);
-		int batch = 1;
-
-		do {
-			removePreviousOutputs();
-			generateNewRuns(best_current_results.getKey(), weight, batch);
-			executeRuns(runs);
-			best_current_results = bestRunByApproach();
-			if (!setBetterResults(best_current_results)) {
-				weight = nextWeight(weight);
-				batch = 1;
-			} else {
-				batch++;
-			}
-
-			if (batch > 3) {
-				weight = nextWeight(weight);
-				batch = 1;
-			}
-		} while (weight <= 6);
-
-		printResults();
-
-	}
-
-	public static void main(String[] args) {
-		// HACER QUE ESTOS PARAMETROS SE PASEN POR LOS ARGUMENTOS!!
-		scenario_folder = new File("CancerBattleSim.rs");
-		output_folder = new File("output/runs");
-		expected_ccells = 1888;
-		cells_ratio = 1;
-		stable_tick = 1000;
-		resting_activation = false; // Opcional argumento
-		hlai_activation = true; // Opcional argumento
-		ulbp2_activation = false; // Opcional argumento
-		nkg2d_activation = false; // Opcional argumento
-		mica_activation = true; // Opcional argumento
-		il15_activation = false; // Opcional argumento
-		//
-		setBestApproach(Integer.MAX_VALUE);
+	static void runForExperiment(int experiment, int ratio) {
 		runner = new CancerBattleSimRunner();
 		runs = new ArrayList<Run>();
+		cells_ratio = ratio;
 
-		Run parent_run = setUpRun(1, stable_tick, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0); // First run with all values set at 0.0
-
-		calculateOptimalWeights(parent_run);
-
-		return;
+		switch (experiment) {
+		case 1: // resting
+			setControlParameters(true, false, false, false, false, false);
+			switch (ratio) {
+			case 1:
+				setExpectedCCellsByPercentage(14);
+				break;
+			case 2:
+				setExpectedCCellsByPercentage(16);
+				break;
+			case 4:
+				setExpectedCCellsByPercentage(19);
+				break;
+			case 8:
+				setExpectedCCellsByPercentage(26);
+				break;
+			default:
+				System.out.println("Non available ratio: " + String.valueOf(ratio));
+				return;
+			}
+			break;
+		case 2: // il15
+			setControlParameters(false, false, false, false, false, true);
+			switch (ratio) {
+			case 1:
+				setExpectedCCellsByPercentage(19);
+				break;
+			case 2:
+				setExpectedCCellsByPercentage(27);
+				break;
+			case 4:
+				setExpectedCCellsByPercentage(40);
+				break;
+			case 8:
+				setExpectedCCellsByPercentage(45);
+				break;
+			default:
+				System.out.println("Non available ratio: " + String.valueOf(ratio));
+				return;
+			}
+			break;
+		case 3: // ulbp2, nkg2d, mica
+			setControlParameters(false, false, true, true, true, false);
+			switch (ratio) {
+			case 1:
+				setExpectedCCellsByPercentage(10);
+				break;
+			case 2:
+				setExpectedCCellsByPercentage(10);
+				break;
+			case 4:
+				setExpectedCCellsByPercentage(11);
+				break;
+			case 8:
+				setExpectedCCellsByPercentage(13);
+				break;
+			default:
+				System.out.println("Non available ratio: " + String.valueOf(ratio));
+				return;
+			}
+			break;
+		case 4: // hlai
+			setControlParameters(false, true, false, false, false, false);
+			switch (ratio) {
+			case 1:
+				setExpectedCCellsByPercentage(42);
+				break;
+			case 2:
+				setExpectedCCellsByPercentage(55);
+				break;
+			case 4:
+				setExpectedCCellsByPercentage(66);
+				break;
+			case 8:
+				setExpectedCCellsByPercentage(74);
+				break;
+			default:
+				System.out.println("Non available ratio: " + String.valueOf(ratio));
+				return;
+			}
+			break;
+		case 5: // hlai, il15
+			setControlParameters(false, true, false, false, false, true);
+			switch (ratio) {
+			case 1:
+				setExpectedCCellsByPercentage(41);
+				break;
+			case 2:
+				setExpectedCCellsByPercentage(57);
+				break;
+			case 4:
+				setExpectedCCellsByPercentage(74);
+				break;
+			case 8:
+				setExpectedCCellsByPercentage(87);
+				break;
+			default:
+				System.out.println("Non available ratio: " + String.valueOf(ratio));
+				return;
+			}
+			break;
+		default:
+			System.out.println("Unknown experiment " + String.valueOf(experiment));
+			return;
+		}
+		setBestApproach(Integer.MAX_VALUE);
 	}
 
-	private static void setBestApproach(Integer approach) {
+	static void setControlParameters(boolean resting, boolean hlai, boolean ulbp2, boolean nkg2d, boolean mica,
+			boolean il15) {
+		control_parameters = new boolean[] { resting, hlai, ulbp2, nkg2d, mica, il15 };
+	}
+
+	static void setExpectedCCellsByPercentage(Integer expected_ccells_percentage) {
+		int volume = Global.xDim * Global.yDim * Global.zDim;
+
+		int ccellCount = (int) (volume / (cells_ratio + 1));
+		float foo = (float) expected_ccells_percentage / 100;
+		expected_ccells = (int) ((int) ccellCount * (1 - foo));
+	}
+
+	static void setBestApproach(Integer approach) {
+		System.out.println("Expected CCells: " + String.valueOf(expected_ccells));
 		System.out.println("Best approach: " + String.valueOf(approach));
 		best_approach = approach;
 	}
@@ -189,15 +299,16 @@ public class CancerBattleSimMain {
 	 * Removes all previous runs outputs files inside directory
 	 * 'ProjectFolder/output/runs'
 	 */
-	private static void removePreviousOutputs() {
+	static void clearPreviousRuns() {
 		try {
+			runs.clear();
 			FileUtils.cleanDirectory(output_folder);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
-	private static List<File> getOutputFiles() {
+	static List<File> getOutputFiles() {
 		String[] files = output_folder.list();
 		List<File> output_files = new ArrayList<File>();
 
@@ -208,13 +319,13 @@ public class CancerBattleSimMain {
 		return output_files;
 	}
 
-	private static File getParamsFileOf(File file) {
+	static File getParamsFileOf(File file) {
 		String file_path = file.toPath().toString();
 		String params_file_path = file_path.substring(0, file_path.length() - 3) + "batch_param_map.txt";
 		return new File(params_file_path);
 	}
 
-	private static Map<String, String> getParamsMapOfRun(File file) {
+	static Map<String, String> getParamsMapOfRun(File file) {
 		File params_file = getParamsFileOf(file);
 		Map<String, String> params = new HashMap<String, String>();
 		try {
@@ -236,7 +347,7 @@ public class CancerBattleSimMain {
 		return params;
 	}
 
-	private static Entry<Run, Integer> bestRunByApproach() {
+	static Entry<Run, Integer> bestRunByApproach() {
 		Integer approach = Integer.MAX_VALUE;
 		Map<String, String> best_current_run = null;
 		System.out.println("Approach results: ");
@@ -255,7 +366,7 @@ public class CancerBattleSimMain {
 		return new SimpleEntry<Run, Integer>(Run.fromParametersMap(best_current_run), approach);
 	}
 
-	private static boolean setBetterResults(Entry<Run, Integer> run_results) {
+	static boolean setBetterResults(Entry<Run, Integer> run_results) {
 		if (isBetterThanPrevious(run_results.getValue())) {
 			best_run = run_results.getKey();
 			setBestApproach(run_results.getValue());
@@ -264,116 +375,91 @@ public class CancerBattleSimMain {
 		return false;
 	}
 
-	private static boolean isBetterThanPrevious(Integer approach) {
+	static boolean isBetterThanPrevious(Integer approach) {
 		return Math.abs(approach - expected_ccells) < Math.abs(best_approach - expected_ccells);
 	}
 
-	private static boolean generateNewRuns(Run previous_best_run, int weight, int batch) {
-		runs.clear();
+	static void generateNewRuns(Run previous_best_run) {
+		double previous_value = 0;
+		int batch = batch_controller.getBatch();
 		int decimal_division = getDecimalDivision(batch);
-		double previous_value;
-		switch (weight) {
-		case 1: // resting
-			previous_value = previous_best_run.getResting();
+		switch (batch_controller.getParameterIndex()) {
+		case RESTING:
+			if (batch > 1 || !batch_controller.isRecalculating())
+				previous_value = previous_best_run.getResting();
 			for (double i = 0.001; i < 0.01; i += 0.001) {
 				double new_value = previous_value + i * decimal_division;
-				Run run = setUpRun(1, stable_tick, new_value, previous_best_run.getHlai(), previous_best_run.getUlbp2(),
-						previous_best_run.getNkg2d(), previous_best_run.getMica(), previous_best_run.getIl15());
-				addRun(run);
+				addRun(setUpRun(1, stable_tick, new_value, previous_best_run.getHlai(), previous_best_run.getUlbp2(),
+						previous_best_run.getNkg2d(), previous_best_run.getMica(), previous_best_run.getIl15()));
 			}
-			return true;
-		case 2: // hlai
-			previous_value = previous_best_run.getHlai();
+			break;
+		case HLAI:
+			if (batch > 1 || !batch_controller.isRecalculating())
+				previous_value = previous_best_run.getHlai();
 			for (double i = 0.001; i < 0.01; i += 0.001) {
 				double new_value = previous_value + i * decimal_division;
-				Run run = setUpRun(1, stable_tick, previous_best_run.getResting(), new_value,
-						previous_best_run.getUlbp2(), previous_best_run.getNkg2d(), previous_best_run.getMica(),
-						previous_best_run.getIl15());
-				addRun(run);
+				addRun(setUpRun(1, stable_tick, previous_best_run.getResting(), new_value, previous_best_run.getUlbp2(),
+						previous_best_run.getNkg2d(), previous_best_run.getMica(), previous_best_run.getIl15()));
 			}
-			return true;
-		case 3: // ulbp2
-			previous_value = previous_best_run.getUlbp2();
+			break;
+		case ULBP2:
+			if (batch > 1 || !batch_controller.isRecalculating())
+				previous_value = previous_best_run.getUlbp2();
 			for (double i = 0.001; i < 0.01; i += 0.001) {
 				double new_value = previous_value + i * decimal_division;
-				Run run = setUpRun(1, stable_tick, previous_best_run.getResting(), previous_best_run.getHlai(),
-						new_value, previous_best_run.getNkg2d(), previous_best_run.getMica(),
-						previous_best_run.getIl15());
-				addRun(run);
+				addRun(setUpRun(1, stable_tick, previous_best_run.getResting(), previous_best_run.getHlai(), new_value,
+						previous_best_run.getNkg2d(), previous_best_run.getMica(), previous_best_run.getIl15()));
 			}
-			return true;
-		case 4: // nkg2d
-			previous_value = previous_best_run.getNkg2d();
+			break;
+		case NKG2D:
+			if (batch > 1 || !batch_controller.isRecalculating())
+				previous_value = previous_best_run.getNkg2d();
 			for (double i = 0.001; i < 0.01; i += 0.001) {
 				double new_value = previous_value + i * decimal_division;
-				Run run = setUpRun(1, stable_tick, previous_best_run.getResting(), previous_best_run.getHlai(),
+				addRun(setUpRun(1, stable_tick, previous_best_run.getResting(), previous_best_run.getHlai(),
 						previous_best_run.getUlbp2(), new_value, previous_best_run.getMica(),
-						previous_best_run.getIl15());
-				addRun(run);
+						previous_best_run.getIl15()));
 			}
-			return true;
-		case 5: // mica
-			previous_value = previous_best_run.getMica();
+			break;
+		case MICA:
+			if (batch > 1 || !batch_controller.isRecalculating())
+				previous_value = previous_best_run.getMica();
 			for (double i = 0.001; i < 0.01; i += 0.001) {
 				double new_value = previous_value + i * decimal_division;
-				Run run = setUpRun(1, stable_tick, previous_best_run.getResting(), previous_best_run.getHlai(),
+				addRun(setUpRun(1, stable_tick, previous_best_run.getResting(), previous_best_run.getHlai(),
 						previous_best_run.getUlbp2(), previous_best_run.getNkg2d(), new_value,
-						previous_best_run.getIl15());
-				addRun(run);
+						previous_best_run.getIl15()));
 			}
-			return true;
-		case 6: // il15
-			previous_value = previous_best_run.getIl15();
+			break;
+		case IL15:
+			if (batch > 1 || !batch_controller.isRecalculating())
+				previous_value = previous_best_run.getIl15();
 			for (double i = 0.001; i < 0.01; i += 0.001) {
 				double new_value = previous_value + i * decimal_division;
-				Run run = setUpRun(1, stable_tick, previous_best_run.getResting(), previous_best_run.getHlai(),
+				addRun(setUpRun(1, stable_tick, previous_best_run.getResting(), previous_best_run.getHlai(),
 						previous_best_run.getUlbp2(), previous_best_run.getNkg2d(), previous_best_run.getMica(),
-						new_value);
-				addRun(run);
+						new_value));
 			}
-			return true;
+			break;
 		default:
-			return false;
+			System.out.println("Unknown parameter");
 		}
 	}
 
-	private static int getDecimalDivision(int batch) {
+	static int getDecimalDivision(int batch) {
 		int decimal_division = 100;
-		for (int i = 0; i < batch-1; i++) {
+		for (int i = 1; i < batch; i++) {
 			decimal_division = decimal_division / 10;
 		}
 		return decimal_division;
 	}
 
-	private static int nextWeight(int weight) {
-		do {
-			weight++;
-		} while (!isActivated(weight));
-
-		return weight;
+	static boolean isPerfectApproach() {
+		return best_approach == expected_ccells;
 	}
-
-	private static boolean isActivated(int weight) {
-		switch (weight) {
-		case 1: // resting
-			return resting_activation;
-		case 2: // hlai
-			return hlai_activation;
-		case 3: // ulbp2
-			return ulbp2_activation;
-		case 4: // nkg2d
-			return nkg2d_activation;
-		case 5: // mica
-			return mica_activation;
-		case 6: // il15
-			return il15_activation;
-		default:
-			return true;
-		}
-	}
-
-	private static void printResults() {
-		System.out.println(best_run.getParametersString());
+	
+	static void printResults() {
+		best_run.print();
 		System.out.println("Remaining CCells\t" + best_approach);
 	}
 }
