@@ -2,7 +2,9 @@ package cancerBattleSim;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -43,14 +45,38 @@ public class CancerBattleSimMain {
 	static int cells_ratio;
 
 	public static void main(String[] args) {
+		createOutputFolders();
+		createBatchParametersFile();
+
+		long startTime = System.currentTimeMillis();
+
+		// Coger estos parámetros desde los argumentos
+		int experiment = 3;
+		int ratio = 4;
+
 		runForExperiment(3, 4);
 
 		batch_controller = new BatchController(control_parameters);
 
-		Run parent_run = setUpRun(1, stable_tick, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0); // First run with all values set at 0.0
-
+		Run parent_run = createParentRun();
+		best_run = parent_run;
 		calculateOptimalWeights(parent_run);
 
+		long stopTime = System.currentTimeMillis();
+
+		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+		String filename = "e" + experiment + "r" + ratio + "_" + timestamp.getTime() + ".txt";
+		File result_file = new File("output/results/" + filename);
+		FileWriter result_writer;
+		try {
+			result_file.createNewFile();
+			result_writer = new FileWriter("output/results/" + filename);
+			result_writer.write(resultsToString(startTime, stopTime));
+			result_writer.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return;
 	}
 
@@ -66,10 +92,8 @@ public class CancerBattleSimMain {
 
 			batch_controller.nextBatch(is_improving);
 		} while (batch_controller.getParameterIndex() < 6 && !isPerfectApproach());
-
-		printResults();
 	}
-	
+
 	/**
 	 * 
 	 * @return CancerBattleSimRunner object ready to be initialized
@@ -89,10 +113,10 @@ public class CancerBattleSimMain {
 	 * 
 	 * @return Run object with parameters loaded
 	 */
-	static Run setUpRun(int run_number, int stable_tick, double resting, double hlai, double ulbp2, double nkg2d,
+	static Run setUpRun(double resting, double hlai, double ulbp2, double nkg2d,
 			double mica, double il15) {
 		Run run = new Run();
-		run.setRun_number(run_number);
+		run.setRun_number(1);
 		run.setStableTick(stable_tick);
 		run.setCells_ratio(cells_ratio);
 		run.setResting_activation(control_parameters[RESTING]);
@@ -136,8 +160,7 @@ public class CancerBattleSimMain {
 		runner.cleanUpBatch(); // Clean runner after all runs complete
 	}
 
-	static Map<Map<String, String>, Map<String, String>> getRunsResults(List<File> output_files,
-			List<Run> runs) {
+	static Map<Map<String, String>, Map<String, String>> getRunsResults(List<File> output_files, List<Run> runs) {
 		Map<Map<String, String>, Map<String, String>> results = new HashMap<Map<String, String>, Map<String, String>>();
 		try {
 			for (File file : output_files) {
@@ -167,7 +190,8 @@ public class CancerBattleSimMain {
 		runner = new CancerBattleSimRunner();
 		runs = new ArrayList<Run>();
 		cells_ratio = ratio;
-
+		
+		Run parent_run = null;
 		switch (experiment) {
 		case 1: // resting
 			setControlParameters(true, false, false, false, false, false);
@@ -276,6 +300,10 @@ public class CancerBattleSimMain {
 		setBestApproach(Integer.MAX_VALUE);
 	}
 
+	static Run createParentRun() {
+		return setUpRun(0.0, 0.0, 0.0, 0.0, 0.0, 0.0); // First run with all values set at 0.0
+	}
+	
 	static void setControlParameters(boolean resting, boolean hlai, boolean ulbp2, boolean nkg2d, boolean mica,
 			boolean il15) {
 		control_parameters = new boolean[] { resting, hlai, ulbp2, nkg2d, mica, il15 };
@@ -383,13 +411,14 @@ public class CancerBattleSimMain {
 		double previous_value = 0;
 		int batch = batch_controller.getBatch();
 		int decimal_division = getDecimalDivision(batch);
+
 		switch (batch_controller.getParameterIndex()) {
 		case RESTING:
 			if (batch > 1 || !batch_controller.isRecalculating())
 				previous_value = previous_best_run.getResting();
 			for (double i = 0.001; i < 0.01; i += 0.001) {
 				double new_value = previous_value + i * decimal_division;
-				addRun(setUpRun(1, stable_tick, new_value, previous_best_run.getHlai(), previous_best_run.getUlbp2(),
+				addRun(setUpRun(new_value, previous_best_run.getHlai(), previous_best_run.getUlbp2(),
 						previous_best_run.getNkg2d(), previous_best_run.getMica(), previous_best_run.getIl15()));
 			}
 			break;
@@ -398,7 +427,7 @@ public class CancerBattleSimMain {
 				previous_value = previous_best_run.getHlai();
 			for (double i = 0.001; i < 0.01; i += 0.001) {
 				double new_value = previous_value + i * decimal_division;
-				addRun(setUpRun(1, stable_tick, previous_best_run.getResting(), new_value, previous_best_run.getUlbp2(),
+				addRun(setUpRun(previous_best_run.getResting(), new_value, previous_best_run.getUlbp2(),
 						previous_best_run.getNkg2d(), previous_best_run.getMica(), previous_best_run.getIl15()));
 			}
 			break;
@@ -407,7 +436,7 @@ public class CancerBattleSimMain {
 				previous_value = previous_best_run.getUlbp2();
 			for (double i = 0.001; i < 0.01; i += 0.001) {
 				double new_value = previous_value + i * decimal_division;
-				addRun(setUpRun(1, stable_tick, previous_best_run.getResting(), previous_best_run.getHlai(), new_value,
+				addRun(setUpRun(previous_best_run.getResting(), previous_best_run.getHlai(), new_value,
 						previous_best_run.getNkg2d(), previous_best_run.getMica(), previous_best_run.getIl15()));
 			}
 			break;
@@ -416,7 +445,7 @@ public class CancerBattleSimMain {
 				previous_value = previous_best_run.getNkg2d();
 			for (double i = 0.001; i < 0.01; i += 0.001) {
 				double new_value = previous_value + i * decimal_division;
-				addRun(setUpRun(1, stable_tick, previous_best_run.getResting(), previous_best_run.getHlai(),
+				addRun(setUpRun(previous_best_run.getResting(), previous_best_run.getHlai(),
 						previous_best_run.getUlbp2(), new_value, previous_best_run.getMica(),
 						previous_best_run.getIl15()));
 			}
@@ -426,7 +455,7 @@ public class CancerBattleSimMain {
 				previous_value = previous_best_run.getMica();
 			for (double i = 0.001; i < 0.01; i += 0.001) {
 				double new_value = previous_value + i * decimal_division;
-				addRun(setUpRun(1, stable_tick, previous_best_run.getResting(), previous_best_run.getHlai(),
+				addRun(setUpRun(previous_best_run.getResting(), previous_best_run.getHlai(),
 						previous_best_run.getUlbp2(), previous_best_run.getNkg2d(), new_value,
 						previous_best_run.getIl15()));
 			}
@@ -436,7 +465,7 @@ public class CancerBattleSimMain {
 				previous_value = previous_best_run.getIl15();
 			for (double i = 0.001; i < 0.01; i += 0.001) {
 				double new_value = previous_value + i * decimal_division;
-				addRun(setUpRun(1, stable_tick, previous_best_run.getResting(), previous_best_run.getHlai(),
+				addRun(setUpRun(previous_best_run.getResting(), previous_best_run.getHlai(),
 						previous_best_run.getUlbp2(), previous_best_run.getNkg2d(), previous_best_run.getMica(),
 						new_value));
 			}
@@ -457,9 +486,43 @@ public class CancerBattleSimMain {
 	static boolean isPerfectApproach() {
 		return best_approach == expected_ccells;
 	}
-	
-	static void printResults() {
-		best_run.print();
-		System.out.println("Remaining CCells\t" + best_approach);
+
+	static String resultsToString(long start, long end) {
+		String results = best_run.toString();
+		results += "expected_ccells:  " + expected_ccells + "\n";
+		results += "remaining_ccells: " + best_approach + "\n";
+		results += "execution_time:   " + String.valueOf(end - start) + " ms\n";
+		return results;
+	}
+
+	static void printResults(long start, long end) {
+		System.out.println(resultsToString(start, end));
+	}
+
+	static void createOutputFolders() {
+		File results = new File("output/results");
+		if (!results.exists())
+			results.mkdirs();
+		File runs = new File("output/runs");
+		if (!runs.exists())
+			runs.mkdirs();
+	}
+
+	static void createBatchParametersFile() {
+		File batch_folder = new File("batch");
+		if (!batch_folder.exists())
+			batch_folder.mkdirs();
+		File batch_params = new File("batch/batch_params.xml");
+		try {
+			if (!batch_params.exists()) {
+				batch_params.createNewFile();
+				FileWriter writer = new FileWriter("batch/batch_params.xml");
+				String params = "<?xml version=\"1.0\" ?><sweep runs=\"1\"><parameter name=\"mica\" type=\"constant\" constant_type=\"double\" value=\"0.0\"></parameter><parameter name=\"resting_activation\" type=\"constant\" constant_type=\"boolean\" value=\"true\"></parameter><parameter name=\"hlai_activation\" type=\"constant\" constant_type=\"boolean\" value=\"true\"></parameter><parameter name=\"il15\" type=\"constant\" constant_type=\"double\" value=\"0.0\"></parameter><parameter name=\"ulbp2_activation\" type=\"constant\" constant_type=\"boolean\" value=\"true\"></parameter><parameter name=\"cells_ratio\" type=\"constant\" constant_type=\"int\" value=\"8\"></parameter><parameter name=\"nkg2d_activation\" type=\"constant\" constant_type=\"boolean\" value=\"false\"></parameter><parameter name=\"mica_activation\" type=\"constant\" constant_type=\"boolean\" value=\"false\"></parameter><parameter name=\"hlai\" type=\"constant\" constant_type=\"double\" value=\"0.0\"></parameter><parameter name=\"nkg2d\" type=\"constant\" constant_type=\"double\" value=\"0.0\"></parameter><parameter name=\"il15_activation\" type=\"constant\" constant_type=\"boolean\" value=\"false\"></parameter><parameter name=\"weight_calculation\" type=\"constant\" constant_type=\"boolean\" value=\"true\"></parameter><parameter name=\"resting\" type=\"constant\" constant_type=\"double\" value=\"0.0\"></parameter><parameter name=\"ulbp2\" type=\"constant\" constant_type=\"double\" value=\"0.0\"></parameter><parameter name=\"randomSeed\" type=\"constant\" constant_type=\"int\" value=\"1\"></parameter></sweep>";
+				writer.write(params);
+				writer.close();
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }

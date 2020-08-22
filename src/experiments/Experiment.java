@@ -98,7 +98,6 @@ public class Experiment {
 	private void setNKCellWeightedFeaturesValues() {
 		for (int i = 0; i < NUM_control_parameters; i++) {
 			if (control_parameters_activated[i] && weights[i] != 0) {
-				System.out.println(String.valueOf(i));
 				nk_cell_features[KILL_CHANCE] = nk_cell_features[KILL_CHANCE] * weights[i];
 				nk_cell_features[KILL_DISTANCE] = nk_cell_features[KILL_DISTANCE] * weights[i];
 				nk_cell_features[LOSE_DISTANCE] = nk_cell_features[LOSE_DISTANCE] * weights[i];
@@ -122,7 +121,7 @@ public class Experiment {
 		for (int i = 0; i < ccellCount; i++) {
 			context.add(new CCell(space, grid));
 		}
-		
+
 		for (int i = 0; i < nkcellCount; i++) {
 			context.add(new NKCell(space, grid, nk_cell_features[KILL_CHANCE], nk_cell_features[KILL_DISTANCE],
 					nk_cell_features[LOSE_DISTANCE], nk_cell_features[SPEED], nk_cell_features[MULTIPLY_CHANCE]));
