@@ -1,4 +1,4 @@
-package cancerBattleSim;
+package automaticWeightCalculation;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -15,11 +15,9 @@ import java.util.Scanner;
 
 import org.apache.commons.io.FileUtils;
 
-import experiments.Run;
-import utils.BatchController;
 import utils.Global;
 
-public class CancerBattleSimMain {
+public class Main {
 	static File scenario_folder = new File("CancerBattleSim.rs");
 	static File output_folder = new File("output/runs");
 	static CancerBattleSimRunner runner;
@@ -51,10 +49,10 @@ public class CancerBattleSimMain {
 		long startTime = System.currentTimeMillis();
 
 		// Coger estos parámetros desde los argumentos
-		int experiment = 3;
-		int ratio = 4;
+		int experiment = 1;
+		int ratio = 1;
 
-		runForExperiment(3, 4);
+		runForExperiment(experiment, ratio);
 
 		batch_controller = new BatchController(control_parameters);
 
@@ -191,7 +189,6 @@ public class CancerBattleSimMain {
 		runs = new ArrayList<Run>();
 		cells_ratio = ratio;
 		
-		Run parent_run = null;
 		switch (experiment) {
 		case 1: // resting
 			setControlParameters(true, false, false, false, false, false);

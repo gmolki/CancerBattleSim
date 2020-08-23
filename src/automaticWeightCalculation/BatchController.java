@@ -1,4 +1,4 @@
-package utils;
+package automaticWeightCalculation;
 
 public class BatchController {
 	private int batch;

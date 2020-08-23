@@ -1,7 +1,7 @@
-package experiments;
+package cancerBattleSim.experiment;
 
-import cells.CCell;
-import cells.NKCell;
+import cancerBattleSim.agents.CCell;
+import cancerBattleSim.agents.NKCell;
 import repast.simphony.context.Context;
 import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.parameter.Parameters;

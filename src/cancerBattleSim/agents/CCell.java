@@ -1,14 +1,12 @@
 /**
  *
  */
-package cells;
+package cancerBattleSim.agents;
 
 import java.util.Random;
 
-import abstractClasses.Cell;
 import repast.simphony.context.Context;
 import repast.simphony.engine.schedule.ScheduledMethod;
-import repast.simphony.random.RandomHelper;
 import repast.simphony.space.continuous.ContinuousSpace;
 import repast.simphony.space.continuous.NdPoint;
 import repast.simphony.space.grid.Grid;
@@ -28,7 +26,6 @@ public class CCell extends Cell {
 
 	private Mode state;
 	private double speed, multiply_chance;
-	private String pattern;
 	private Random random;
 
 	public CCell(ContinuousSpace<Object> space, Grid<Object> grid) {
@@ -36,7 +33,6 @@ public class CCell extends Cell {
 		this.grid = grid;
 		this.state = Mode.MOVE;
 		this.speed = 0.003;
-		this.pattern = "0000 0011";
 		this.multiply_chance = 0;// 0.0006;
 		this.random = new Random();
 	}
@@ -78,6 +74,7 @@ public class CCell extends Cell {
 
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public void multiply() {
 		NdPoint location = space.getLocation(this);

@@ -1,10 +1,9 @@
-package cells;
+package cancerBattleSim.agents;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import abstractClasses.Cell;
 import repast.simphony.context.Context;
 import repast.simphony.engine.schedule.ScheduledMethod;
 import repast.simphony.space.continuous.ContinuousSpace;
@@ -157,6 +156,7 @@ public class NKCell extends Cell {
 		moveTowards(this, target_ccell, speed, space, grid);
 	}
 
+	@SuppressWarnings("unchecked")
 	public void multiply() {
 		NdPoint location = space.getLocation(this);
 		Context<Object> context = ContextUtils.getContext(this);
@@ -172,6 +172,7 @@ public class NKCell extends Cell {
 		state = Mode.MOVE;
 	}
 
+	@SuppressWarnings("unchecked")
 	private void attack() {
 		if (target_ccell != null) {
 			/*

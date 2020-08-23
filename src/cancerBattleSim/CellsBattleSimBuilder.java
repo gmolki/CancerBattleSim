@@ -1,6 +1,6 @@
 package cancerBattleSim;
 
-import experiments.Experiment;
+import cancerBattleSim.experiment.Experiment;
 import repast.simphony.context.Context;
 import repast.simphony.context.space.continuous.ContinuousSpaceFactory;
 import repast.simphony.context.space.continuous.ContinuousSpaceFactoryFinder;

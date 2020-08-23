@@ -1,4 +1,4 @@
-package cancerBattleSim;
+package automaticWeightCalculation;
 
 import java.io.File;
 
