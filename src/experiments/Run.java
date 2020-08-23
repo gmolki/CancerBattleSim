@@ -207,23 +207,22 @@ public class Run {
 		return parameters;
 	}
 
-	public void print() {
-		String parameters = "\nOptimal parameter values to experiment selected:\n";
-		parameters += "resting_activation:  " + String.valueOf(isResting_activation()) + "\n";
-		parameters += "hlai_activation:     " + String.valueOf(isHlai_activation()) + "\n";
-		parameters += "ulbp2_activation:    " + String.valueOf(isUlbp2_activation()) + "\n";
-		parameters += "nkg2d_activation:    " + String.valueOf(isNkg2d_activation()) + "\n";
-		parameters += "mica_activation:     " + String.valueOf(isMica_activation()) + "\n";
-		parameters += "il15_activation:     " + String.valueOf(isIl15_activation()) + "\n";
-		parameters += "resting:      " + String.valueOf(getResting()) + "\n";
-		parameters += "hlai:         " + String.valueOf(getHlai()) + "\n";
-		parameters += "ulbp2:        " + String.valueOf(getUlbp2()) + "\n";
-		parameters += "nkg2d:        " + String.valueOf(getNkg2d()) + "\n";
-		parameters += "mica:         " + String.valueOf(getMica()) + "\n";
-		parameters += "il15:         " + String.valueOf(getIl15()) + "\n";
-		parameters += "cells_ratio:  " + String.valueOf(getCells_ratio()) + "\n";
-
-		System.out.println(parameters);
+	public String toString() {
+		String parameters = "resting_activation: " + String.valueOf(isResting_activation()) + "\n";
+		parameters += "hlai_activation:  " + String.valueOf(isHlai_activation()) + "\n";
+		parameters += "ulbp2_activation: " + String.valueOf(isUlbp2_activation()) + "\n";
+		parameters += "nkg2d_activation: " + String.valueOf(isNkg2d_activation()) + "\n";
+		parameters += "mica_activation:  " + String.valueOf(isMica_activation()) + "\n";
+		parameters += "il15_activation:  " + String.valueOf(isIl15_activation()) + "\n";
+		parameters += "resting: " + String.valueOf(getResting()) + "\n";
+		parameters += "hlai:    " + String.valueOf(getHlai()) + "\n";
+		parameters += "ulbp2:   " + String.valueOf(getUlbp2()) + "\n";
+		parameters += "nkg2d:   " + String.valueOf(getNkg2d()) + "\n";
+		parameters += "mica:    " + String.valueOf(getMica()) + "\n";
+		parameters += "il15:    " + String.valueOf(getIl15()) + "\n";
+		parameters += "cells_ratio: " + String.valueOf(getCells_ratio()) + "\n";
+		
+		return parameters;
 	}
 
 	public static Run fromParametersMap(Map<String, String> run_parameters) {
