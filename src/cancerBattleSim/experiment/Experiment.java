@@ -1,14 +1,14 @@
-package experiments;
+package cancerBattleSim.experiment;
 
-import cells.CCell;
-import cells.NKCell;
+import cancerBattleSim.agents.CCell;
+import cancerBattleSim.agents.NKCell;
 import repast.simphony.context.Context;
 import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.parameter.Parameters;
 import repast.simphony.space.continuous.ContinuousSpace;
 import repast.simphony.space.continuous.NdPoint;
 import repast.simphony.space.grid.Grid;
-import utils.Global;
+import utils.GlobalVariables;
 
 public class Experiment {
 	private Context<Object> context;
@@ -114,8 +114,6 @@ public class Experiment {
 	 * @return context with new Cells into it
 	 */
 	private Context<Object> createCellsForRatio(ContinuousSpace<Object> space, Grid<Object> grid) {
-		Global.RATIO = experiment_params.getInteger("cells_ratio");
-
 		calculateCellsForRatio();
 
 		for (int i = 0; i < ccellCount; i++) {
@@ -136,7 +134,7 @@ public class Experiment {
 	}
 
 	private void calculateCellsForRatio() {
-		int volume = Global.xDim * Global.yDim * Global.zDim;
+		int volume = GlobalVariables.xDim * GlobalVariables.yDim * GlobalVariables.zDim;
 
 		ccellCount = (int) (volume / (experiment_params.getInteger("cells_ratio") + 1));
 		nkcellCount = volume - ccellCount;

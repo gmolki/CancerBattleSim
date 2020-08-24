@@ -1,10 +1,9 @@
-package cells;
+package cancerBattleSim.agents;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import abstractClasses.Cell;
 import repast.simphony.context.Context;
 import repast.simphony.engine.schedule.ScheduledMethod;
 import repast.simphony.space.continuous.ContinuousSpace;
@@ -12,7 +11,7 @@ import repast.simphony.space.continuous.NdPoint;
 import repast.simphony.space.grid.Grid;
 import repast.simphony.space.grid.GridPoint;
 import repast.simphony.util.ContextUtils;
-import utils.Global;
+import utils.GlobalVariables;
 
 public class NKCell extends Cell {
 	private ContinuousSpace<Object> space;
@@ -64,7 +63,7 @@ public class NKCell extends Cell {
 
 		if (state != Mode.DORMANT && nsteps_no_ccells > nsteps_noccells_for_dormant) {
 			state = Mode.DORMANT;
-			Global.dormants += 1;
+			GlobalVariables.dormants += 1;
 		} else if (state == Mode.DORMANT && nsteps_with_ccells > nsteps_with_ccells_for_wakeup) {
 			state = Mode.WAKEUP;
 		}
@@ -157,6 +156,7 @@ public class NKCell extends Cell {
 		moveTowards(this, target_ccell, speed, space, grid);
 	}
 
+	@SuppressWarnings("unchecked")
 	public void multiply() {
 		NdPoint location = space.getLocation(this);
 		Context<Object> context = ContextUtils.getContext(this);
@@ -172,6 +172,7 @@ public class NKCell extends Cell {
 		state = Mode.MOVE;
 	}
 
+	@SuppressWarnings("unchecked")
 	private void attack() {
 		if (target_ccell != null) {
 			/*
@@ -213,7 +214,7 @@ public class NKCell extends Cell {
 	}
 
 	private boolean willAttack() {
-		return random.nextFloat() < (kill_chance * Global.KILL_CHANCE);
+		return random.nextFloat() < (kill_chance * GlobalVariables.KILL_CHANCE);
 	}
 
 	private boolean canKill(double distance) {

@@ -1,4 +1,4 @@
-package abstractClasses;
+package cancerBattleSim.agents;
 
 import repast.simphony.context.Context;
 import repast.simphony.random.RandomHelper;
