@@ -15,7 +15,7 @@ import repast.simphony.space.grid.Grid;
 import repast.simphony.space.grid.GridBuilderParameters;
 import repast.simphony.space.grid.SimpleGridAdder;
 import repast.simphony.space.grid.WrapAroundBorders;
-import utils.Global;
+import utils.GlobalVariables;
 
 public class CellsBattleSimBuilder implements ContextBuilder<Object> {
 	private ContinuousSpace<Object> space;
@@ -32,11 +32,11 @@ public class CellsBattleSimBuilder implements ContextBuilder<Object> {
 
 		ContinuousSpaceFactory spaceFactory = ContinuousSpaceFactoryFinder.createContinuousSpaceFactory(null);
 		space = spaceFactory.createContinuousSpace("space", context, new RandomCartesianAdder<Object>(),
-				new repast.simphony.space.continuous.WrapAroundBorders(), Global.xDim, Global.yDim, Global.zDim);
+				new repast.simphony.space.continuous.WrapAroundBorders(), GlobalVariables.xDim, GlobalVariables.yDim, GlobalVariables.zDim);
 
 		GridFactory gridFactory = GridFactoryFinder.createGridFactory(null);
 		grid = gridFactory.createGrid("grid", context, new GridBuilderParameters<Object>(new WrapAroundBorders(),
-				new SimpleGridAdder<Object>(), true, Global.xDim, Global.yDim, Global.zDim));
+				new SimpleGridAdder<Object>(), true, GlobalVariables.xDim, GlobalVariables.yDim, GlobalVariables.zDim));
 
 		context = experiment.setExperiment(space, grid);
 

@@ -1,4 +1,4 @@
-package automaticWeightCalculation;
+package automaticWeightCalculation.runs.controllers;
 
 public class BatchController {
 	private int batch;
@@ -39,6 +39,14 @@ public class BatchController {
 	
 	public boolean isRecalculating() {
 		return this.is_recalculating;
+	}
+	
+	public int getDecimalDivision() {
+		int decimal_division = 100;
+		for (int i = 1; i < this.batch; i++) {
+			decimal_division = decimal_division / 10;
+		}
+		return decimal_division;
 	}
 
 	private void setFirstParameter() {

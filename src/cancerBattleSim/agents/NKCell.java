@@ -11,7 +11,7 @@ import repast.simphony.space.continuous.NdPoint;
 import repast.simphony.space.grid.Grid;
 import repast.simphony.space.grid.GridPoint;
 import repast.simphony.util.ContextUtils;
-import utils.Global;
+import utils.GlobalVariables;
 
 public class NKCell extends Cell {
 	private ContinuousSpace<Object> space;
@@ -63,7 +63,7 @@ public class NKCell extends Cell {
 
 		if (state != Mode.DORMANT && nsteps_no_ccells > nsteps_noccells_for_dormant) {
 			state = Mode.DORMANT;
-			Global.dormants += 1;
+			GlobalVariables.dormants += 1;
 		} else if (state == Mode.DORMANT && nsteps_with_ccells > nsteps_with_ccells_for_wakeup) {
 			state = Mode.WAKEUP;
 		}
@@ -214,7 +214,7 @@ public class NKCell extends Cell {
 	}
 
 	private boolean willAttack() {
-		return random.nextFloat() < (kill_chance * Global.KILL_CHANCE);
+		return random.nextFloat() < (kill_chance * GlobalVariables.KILL_CHANCE);
 	}
 
 	private boolean canKill(double distance) {

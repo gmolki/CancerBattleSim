@@ -1,7 +1,6 @@
 package utils;
 
-public class Global {
-	public static int RATIO = 8;
+public class GlobalVariables {
 	public static double KILL_CHANCE = 0.6;
 
 	public static int xDim = 40;
