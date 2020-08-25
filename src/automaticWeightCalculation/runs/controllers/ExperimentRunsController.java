@@ -58,71 +58,22 @@ public class ExperimentRunsController {
 	}
 	
 	private List<Run> generateNewRuns(Run previous_best_run) {
-		double previous_value = 0;
+		
 		int batch = batch_controller.getBatch();
+		int weight = batch_controller.getParameterIndex();
 		int decimal_division = batch_controller.getDecimalDivision();
-
-		switch (batch_controller.getParameterIndex()) {
-		case RESTING:
-			if (batch > 1 || !batch_controller.isRecalculating())
-				previous_value = previous_best_run.getResting();
-			for (double i = 0.001; i < 0.01; i += 0.001) {
-				double new_value = previous_value + i * decimal_division;
-				addRun(setUpRun(new_value, previous_best_run.getHlai(), previous_best_run.getUlbp2(),
-						previous_best_run.getNkg2d(), previous_best_run.getMica(), previous_best_run.getIl15()));
-			}
-			break;
-		case HLAI:
-			if (batch > 1 || !batch_controller.isRecalculating())
-				previous_value = previous_best_run.getHlai();
-			for (double i = 0.001; i < 0.01; i += 0.001) {
-				double new_value = previous_value + i * decimal_division;
-				addRun(setUpRun(previous_best_run.getResting(), new_value, previous_best_run.getUlbp2(),
-						previous_best_run.getNkg2d(), previous_best_run.getMica(), previous_best_run.getIl15()));
-			}
-			break;
-		case ULBP2:
-			if (batch > 1 || !batch_controller.isRecalculating())
-				previous_value = previous_best_run.getUlbp2();
-			for (double i = 0.001; i < 0.01; i += 0.001) {
-				double new_value = previous_value + i * decimal_division;
-				addRun(setUpRun(previous_best_run.getResting(), previous_best_run.getHlai(), new_value,
-						previous_best_run.getNkg2d(), previous_best_run.getMica(), previous_best_run.getIl15()));
-			}
-			break;
-		case NKG2D:
-			if (batch > 1 || !batch_controller.isRecalculating())
-				previous_value = previous_best_run.getNkg2d();
-			for (double i = 0.001; i < 0.01; i += 0.001) {
-				double new_value = previous_value + i * decimal_division;
-				addRun(setUpRun(previous_best_run.getResting(), previous_best_run.getHlai(),
-						previous_best_run.getUlbp2(), new_value, previous_best_run.getMica(),
-						previous_best_run.getIl15()));
-			}
-			break;
-		case MICA:
-			if (batch > 1 || !batch_controller.isRecalculating())
-				previous_value = previous_best_run.getMica();
-			for (double i = 0.001; i < 0.01; i += 0.001) {
-				double new_value = previous_value + i * decimal_division;
-				addRun(setUpRun(previous_best_run.getResting(), previous_best_run.getHlai(),
-						previous_best_run.getUlbp2(), previous_best_run.getNkg2d(), new_value,
-						previous_best_run.getIl15()));
-			}
-			break;
-		case IL15:
-			if (batch > 1 || !batch_controller.isRecalculating())
-				previous_value = previous_best_run.getIl15();
-			for (double i = 0.001; i < 0.01; i += 0.001) {
-				double new_value = previous_value + i * decimal_division;
-				addRun(setUpRun(previous_best_run.getResting(), previous_best_run.getHlai(),
-						previous_best_run.getUlbp2(), previous_best_run.getNkg2d(), previous_best_run.getMica(),
-						new_value));
-			}
-			break;
-		default:
-			System.out.println("Unknown parameter");
+		double[] control_parameters_values = new double[] { previous_best_run.getResting(),
+				previous_best_run.getHlai(), previous_best_run.getUlbp2(), previous_best_run.getNkg2d(),
+				previous_best_run.getMica(), previous_best_run.getIl15() };
+		double previous_value = 0.5;
+		if (batch > 1)
+			previous_value = control_parameters_values[weight];
+		for (double i = -0.0045; i < 0.005; i += 0.001) {
+			control_parameters_values[weight] = previous_value + i * decimal_division;
+			addRun(setUpRun(control_parameters_values[RESTING], control_parameters_values[HLAI], control_parameters_values[ULBP2],
+					control_parameters_values[NKG2D], control_parameters_values[MICA], control_parameters_values[IL15]));
 		}
+
 		return runs;
 	}
 	

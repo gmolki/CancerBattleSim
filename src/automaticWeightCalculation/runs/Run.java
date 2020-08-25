@@ -2,6 +2,7 @@ package automaticWeightCalculation.runs;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
+import java.util.Random;
 
 import org.apache.commons.beanutils.BeanUtils;
 
@@ -16,7 +17,7 @@ public class Run {
 	int cells_ratio;
 	boolean weight_calculation = true;
 
-	int stable_tick = 300; // Tick when runs are used to be stable
+	int stable_tick = 1000; // Tick when runs are used to be stable
 
 	/**
 	 * Set default run parameters. By default all control parameters are set to 0 an
@@ -200,7 +201,7 @@ public class Run {
 		parameters += "il15\t" + String.valueOf(getIl15()) + ",";
 		parameters += "cells_ratio\t" + String.valueOf(getCells_ratio()) + ",";
 		parameters += "weight_calculation\t" + String.valueOf(isWeight_calculation()) + ",";
-		parameters += "randomSeed\t" + String.valueOf(1);
+		parameters += "randomSeed\t" + String.valueOf((int)Math.random() * 500000000);
 
 		return parameters;
 	}

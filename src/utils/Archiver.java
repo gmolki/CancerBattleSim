@@ -14,11 +14,11 @@ public class Archiver {
 	public static File scenario_folder = new File("CancerBattleSim.rs");
 	private static File batch_folder = new File("batch");
 	private static File output_folder = new File("output");
-	public static File runs_folder = new File(output_folder.toURI() + "runs");
-	private static File results_folder = new File(output_folder.toURI() + "results");
+	public static File runs_folder = new File(output_folder.toPath() + "/runs");
+	private static File results_folder = new File(output_folder.toPath() + "/results");
 
 	// Files
-	public static File batch_params = new File(batch_folder.toURI() + "batch_params.xml");
+	public static File batch_params = new File(batch_folder.toPath() + "/batch_params.xml");
 
 	public static void setUpWorkspace() {
 		createOutputFolders();
@@ -28,11 +28,11 @@ public class Archiver {
 	public static void writeResultsFile(int experiment, int ratio, String results, long elapsed_time) {
 		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 		String filename = "e" + experiment + "r" + ratio + "_" + timestamp.getTime() + ".txt";
-		File result_file = new File(results_folder.toURI() + filename);
+		File result_file = new File(results_folder.toPath() + "/" + filename);
 		FileWriter result_writer;
 		try {
 			result_file.createNewFile();
-			result_writer = new FileWriter(results_folder.toURI() + filename);
+			result_writer = new FileWriter(results_folder.toPath() + "/" + filename);
 			result_writer.write(results);
 			result_writer.write("Elapsed time:\t " + elapsed_time);
 			result_writer.close();
@@ -53,7 +53,7 @@ public class Archiver {
 
 		for (String fileName : files) {
 			if (fileName.contains("output_data") && !fileName.contains("batch_param_map.txt"))
-				output_files.add(new File(runs_folder.toURI() + fileName));
+				output_files.add(new File(runs_folder.toPath() + "/" + fileName));
 		}
 		return output_files;
 	}
