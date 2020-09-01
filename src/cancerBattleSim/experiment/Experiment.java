@@ -87,7 +87,7 @@ public class Experiment {
 	}
 
 	private void setWeights() {
-		weights[RESTING] = experiment_params.getDouble("resting") * 0.6;
+		weights[RESTING] = experiment_params.getDouble("resting") * 0.3;
 		weights[IL15] = experiment_params.getDouble("il15") * 3.0;
 		weights[ULBP2] = experiment_params.getDouble("ulbp2");
 		weights[MICA] = experiment_params.getDouble("mica");
