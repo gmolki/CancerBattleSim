@@ -3,8 +3,6 @@
  */
 package cancerBattleSim.agents;
 
-import java.util.Random;
-
 import repast.simphony.context.Context;
 import repast.simphony.engine.schedule.ScheduledMethod;
 import repast.simphony.space.continuous.ContinuousSpace;
@@ -17,24 +15,18 @@ import repast.simphony.util.ContextUtils;
  *
  */
 public class CCell extends Cell {
-	private ContinuousSpace<Object> space;
-	private Grid<Object> grid;
-
 	private enum Mode {
 		MULTIPLY, MOVE, DEFEND, TRAVEL, ARRIVE, DIE
 	};
 
 	private Mode state;
-	private double speed, multiply_chance;
-	private Random random;
 
 	public CCell(ContinuousSpace<Object> space, Grid<Object> grid) {
 		this.space = space;
 		this.grid = grid;
 		this.state = Mode.MOVE;
-		this.speed = 0.003;
-		this.multiply_chance = 0;// 0.0006;
-		this.random = new Random();
+		this.speed = 0.001;
+		this.multiply_chance = 0.00001;// 0.0006;
 	}
 
 	@Override
@@ -70,7 +62,7 @@ public class CCell extends Cell {
 		if (random.nextFloat() < multiply_chance) {
 			state = Mode.MULTIPLY;
 		}
-		moveTowards(this, null, speed, space, grid);
+		moveTowards(null);
 
 	}
 	

@@ -2,7 +2,6 @@ package cancerBattleSim.agents;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import repast.simphony.context.Context;
 import repast.simphony.engine.schedule.ScheduledMethod;
@@ -14,16 +13,11 @@ import repast.simphony.util.ContextUtils;
 import utils.GlobalVariables;
 
 public class NKCell extends Cell {
-	private ContinuousSpace<Object> space;
-	private Grid<Object> grid;
-
 	private enum Mode {
 		MULTIPLY, MOVE, LEARN, ATTACK, DORMANT, WAKEUP, DIE
 	}
 
 	private Mode state = Mode.MOVE;
-	private double speed;
-	private double multiply_chance;
 	private double kill_distance;
 	private double lose_distance;
 	private double kill_chance;
@@ -36,10 +30,9 @@ public class NKCell extends Cell {
 	private CCell target_ccell = null;
 	private List<CCell> neighbor_ccells = new ArrayList<CCell>();
 
-	private Random random = new Random();
-
 	public NKCell(ContinuousSpace<Object> space, Grid<Object> grid, double kill_chance, double kill_distance,
 			double lose_distance, double speed, double multiply_chance) {
+		this.state = Mode.MOVE;
 		this.space = space;
 		this.grid = grid;
 		setKill_chance(kill_chance);
@@ -96,22 +89,6 @@ public class NKCell extends Cell {
 		}
 	}
 
-	public double getSpeed() {
-		return speed;
-	}
-
-	public void setSpeed(double speed) {
-		this.speed = speed;
-	}
-
-	public double getMultiply_chance() {
-		return multiply_chance;
-	}
-
-	public void setMultiply_chance(double multiply_chance) {
-		this.multiply_chance = multiply_chance;
-	}
-
 	public double getKill_distance() {
 		return kill_distance;
 	}
@@ -153,7 +130,7 @@ public class NKCell extends Cell {
 				// TODO: Create link to target_ccell
 			}
 		}
-		moveTowards(this, target_ccell, speed, space, grid);
+		moveTowards(target_ccell);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -187,7 +164,7 @@ public class NKCell extends Cell {
 					Context<Object> context = ContextUtils.getContext(this);
 					context.remove(target_ccell);
 				} else if (isInsideRadius(distanceToTarget)) {
-					moveTowards(this, target_ccell, speed, space, grid);
+					moveTowards(target_ccell);
 				} else {
 					// TODO: Destroy the link with the target_ccell
 					target_ccell = null;
@@ -225,7 +202,7 @@ public class NKCell extends Cell {
 		return distance < lose_distance;
 	}
 
-	public void updateCCellsWithinDistance(double distance) {
+	private void updateCCellsWithinDistance(double distance) {
 		GridPoint position = grid.getLocation(this);
 		double xPosCell = position.getX(), yPosCell = position.getY(), zPosCell = position.getZ();
 

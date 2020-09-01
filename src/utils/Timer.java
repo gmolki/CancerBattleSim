@@ -16,6 +16,7 @@ public class Timer {
 	
 	public void stop() {
 		this.stop_time = currentTime();
+		this.is_running = false;
 	}
 	
 	public void restart() {

@@ -9,31 +9,27 @@ import java.util.Scanner;
 import java.util.Map.Entry;
 
 import automaticWeightCalculation.runs.Run;
-import automaticWeightCalculation.runs.Runner;
 import automaticWeightCalculation.runs.controllers.ExperimentRunsController;
 import utils.Archiver;
 
 public class OptimalWeightCalculator {
 	private ExperimentRunsController experiment_runs_controller;
-	private Runner runner;
-	private Run parent_run;
 	private Run best_run;
 	private Integer best_approach;
 
 	public OptimalWeightCalculator(int experiment, int ratio) {
 		this.experiment_runs_controller = new ExperimentRunsController(experiment, ratio);
-		this.parent_run = experiment_runs_controller.generateParentRun();
 		this.setBestApproach(Integer.MAX_VALUE);
 	}
 
 	public Run calculateOptimalWeights() {
-		Entry<Run, Integer> best_current_results = new SimpleEntry<Run, Integer>(this.parent_run,
-				Integer.MAX_VALUE - 1);
+		Entry<Run, Integer> best_current_results = new SimpleEntry<Run, Integer>(
+				experiment_runs_controller.generateParentRun(), this.best_approach);
 		boolean is_improving = true;
 
 		do {
-			List<Run> runs = experiment_runs_controller.getRuns(best_current_results.getKey());
-			executeRuns(runs);
+			List<Run> runs = experiment_runs_controller.getBatchRuns(best_current_results.getKey());
+			experiment_runs_controller.executeRuns(runs);
 			best_current_results = bestRunByApproach(runs);
 			is_improving = setBetterResults(best_current_results);
 
@@ -47,35 +43,6 @@ public class OptimalWeightCalculator {
 		results += "expected_ccells:\t" + experiment_runs_controller.getExpectedCCells() + "\n";
 		results += "remaining_ccells:\t" + best_approach + "\n";
 		return results;
-	}
-
-	private void setUpRunner(Run run) {
-		this.runner = new Runner(run.getParameters());
-		try {
-			runner.load();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	private void executeRun(Run run) {
-		this.runner.runInitialize();
-
-		for (int run_ticks = 0; run_ticks < (run.getStableTick()); run_ticks++) {
-			this.runner.step();
-			run_ticks += 1;
-		}
-
-		this.runner.stop();
-		this.runner.cleanUpRun();
-	}
-
-	private void executeRuns(List<Run> runs) {
-		for (Run run : runs) {
-			this.setUpRunner(run);
-			this.executeRun(run);
-		}
-		runner.cleanUpBatch();
 	}
 
 	private Entry<Run, Integer> bestRunByApproach(List<Run> runs) {
