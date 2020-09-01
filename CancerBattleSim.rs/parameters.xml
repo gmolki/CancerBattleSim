@@ -13,7 +13,7 @@
 									
 		/>
 				<parameter name="ulbp2" displayName="ULBP2 Value" type="double" 
-						defaultValue="0.0" 
+						defaultValue="0.0215" 
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
 									
@@ -45,14 +45,14 @@
 									
 		/>
 				<parameter name="ulbp2_activation" displayName="ULBP2 Activation" type="boolean" 
-						defaultValue="false" 
+						defaultValue="true" 
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$BooleanConverter"
 									values="false true "
 						
 		/>
 				<parameter name="cells_ratio" displayName="0 - Ratio NKCells/CCells" type="int" 
-						defaultValue="8" 
+						defaultValue="4" 
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
 									

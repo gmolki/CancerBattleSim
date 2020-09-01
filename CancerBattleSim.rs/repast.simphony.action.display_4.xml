@@ -3,30 +3,22 @@
   <type>3D</type>
   <styles>
     <entry>
-      <string>cells.NKCell</string>
+      <string>cancerBattleSim.agents.CCell</string>
       <string>repast.simphony.visualization.editedStyle.EditedStyle3D</string>
     </entry>
     <entry>
-      <string>cells.CCell</string>
-      <string>repast.simphony.visualization.editedStyle.EditedStyle3D</string>
-    </entry>
-    <entry>
-      <string>cells.NCell</string>
+      <string>cancerBattleSim.agents.NKCell</string>
       <string>repast.simphony.visualization.editedStyle.EditedStyle3D</string>
     </entry>
   </styles>
   <editedStyles>
     <entry>
-      <string>cells.NKCell</string>
-      <string>cells.NKCell.style_1.xml</string>
+      <string>cancerBattleSim.agents.CCell</string>
+      <string>cancerBattleSim.agents.CCell.style.xml</string>
     </entry>
     <entry>
-      <string>cells.CCell</string>
-      <string>cells.CCell.style_1.xml</string>
-    </entry>
-    <entry>
-      <string>cells.NCell</string>
-      <string>cells.NCell.style_1.xml</string>
+      <string>cancerBattleSim.agents.NKCell</string>
+      <string>cancerBattleSim.agents.NKCell.style.xml</string>
     </entry>
   </editedStyles>
   <netStyles/>
@@ -39,23 +31,19 @@
     <pType>LAST</pType>
     <duration>-1.0</duration>
     <frequency>REPEAT</frequency>
-    <hashCode>575092540</hashCode>
+    <hashCode>1030264992</hashCode>
   </schedParams>
   <layoutClassName>foo.bar.baz</layoutClassName>
   <layoutProjection>space</layoutProjection>
   <layoutInterval>0</layoutInterval>
   <layerOrder>
     <entry>
-      <string>cells.NKCell</string>
-      <int>0</int>
-    </entry>
-    <entry>
-      <string>cells.CCell</string>
-      <int>2</int>
-    </entry>
-    <entry>
-      <string>cells.NCell</string>
+      <string>cancerBattleSim.agents.CCell</string>
       <int>1</int>
+    </entry>
+    <entry>
+      <string>cancerBattleSim.agents.NKCell</string>
+      <int>0</int>
     </entry>
   </layerOrder>
   <projections>

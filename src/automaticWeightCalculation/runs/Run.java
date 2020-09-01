@@ -1,14 +1,14 @@
-package experiments;
+package automaticWeightCalculation.runs;
 
-import java.io.File;
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
+import java.util.Random;
 
 import org.apache.commons.beanutils.BeanUtils;
 
 import repast.simphony.batch.parameter.ParameterLineParser;
 import repast.simphony.parameter.Parameters;
+import utils.Archiver;
 
 public class Run {
 	int run_number;
@@ -17,7 +17,7 @@ public class Run {
 	int cells_ratio;
 	boolean weight_calculation = true;
 
-	int stable_tick = 300; // Tick when runs are used to be stable
+	int stable_tick = 1000; // Tick when runs are used to be stable
 
 	/**
 	 * Set default run parameters. By default all control parameters are set to 0 an
@@ -174,12 +174,11 @@ public class Run {
 
 	public Parameters getParameters() {
 		String params = this.getParametersString();
-		File fparams = new File("batch/batch_params.xml");
 		ParameterLineParser parser;
 		try {
-			parser = new ParameterLineParser(fparams.toURI());
+			parser = new ParameterLineParser(Archiver.batch_params.toURI());
 			return parser.parse(params);
-		} catch (IOException e) {
+		} catch (Exception e) {
 			System.out.println("Error while parsing parameters");
 			e.printStackTrace();
 			return null;
@@ -202,26 +201,26 @@ public class Run {
 		parameters += "il15\t" + String.valueOf(getIl15()) + ",";
 		parameters += "cells_ratio\t" + String.valueOf(getCells_ratio()) + ",";
 		parameters += "weight_calculation\t" + String.valueOf(isWeight_calculation()) + ",";
-		parameters += "randomSeed\t" + String.valueOf(1);
+		parameters += "randomSeed\t" + String.valueOf((int)Math.random() * 500000000);
 
 		return parameters;
 	}
 
 	public String toString() {
-		String parameters = "resting_activation: " + String.valueOf(isResting_activation()) + "\n";
-		parameters += "hlai_activation:  " + String.valueOf(isHlai_activation()) + "\n";
-		parameters += "ulbp2_activation: " + String.valueOf(isUlbp2_activation()) + "\n";
-		parameters += "nkg2d_activation: " + String.valueOf(isNkg2d_activation()) + "\n";
-		parameters += "mica_activation:  " + String.valueOf(isMica_activation()) + "\n";
-		parameters += "il15_activation:  " + String.valueOf(isIl15_activation()) + "\n";
-		parameters += "resting: " + String.valueOf(getResting()) + "\n";
-		parameters += "hlai:    " + String.valueOf(getHlai()) + "\n";
-		parameters += "ulbp2:   " + String.valueOf(getUlbp2()) + "\n";
-		parameters += "nkg2d:   " + String.valueOf(getNkg2d()) + "\n";
-		parameters += "mica:    " + String.valueOf(getMica()) + "\n";
-		parameters += "il15:    " + String.valueOf(getIl15()) + "\n";
-		parameters += "cells_ratio: " + String.valueOf(getCells_ratio()) + "\n";
-		
+		String parameters = "resting_activation:\t" + String.valueOf(isResting_activation()) + "\n";
+		parameters += "hlai_activation:\t" + String.valueOf(isHlai_activation()) + "\n";
+		parameters += "ulbp2_activation:\t" + String.valueOf(isUlbp2_activation()) + "\n";
+		parameters += "nkg2d_activation:\t" + String.valueOf(isNkg2d_activation()) + "\n";
+		parameters += "mica_activation:\t" + String.valueOf(isMica_activation()) + "\n";
+		parameters += "il15_activation:\t" + String.valueOf(isIl15_activation()) + "\n";
+		parameters += "resting:\t" + String.valueOf(getResting()) + "\n";
+		parameters += "hlai:\t" + String.valueOf(getHlai()) + "\n";
+		parameters += "ulbp2:\t" + String.valueOf(getUlbp2()) + "\n";
+		parameters += "nkg2d:\t" + String.valueOf(getNkg2d()) + "\n";
+		parameters += "mica:\t" + String.valueOf(getMica()) + "\n";
+		parameters += "il15:\t" + String.valueOf(getIl15()) + "\n";
+		parameters += "cells_ratio:\t" + String.valueOf(getCells_ratio()) + "\n";
+
 		return parameters;
 	}
 

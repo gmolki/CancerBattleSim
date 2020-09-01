@@ -1,14 +1,14 @@
-package experiments;
+package cancerBattleSim.experiment;
 
-import cells.CCell;
-import cells.NKCell;
+import cancerBattleSim.agents.CCell;
+import cancerBattleSim.agents.NKCell;
 import repast.simphony.context.Context;
 import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.parameter.Parameters;
 import repast.simphony.space.continuous.ContinuousSpace;
 import repast.simphony.space.continuous.NdPoint;
 import repast.simphony.space.grid.Grid;
-import utils.Global;
+import utils.GlobalVariables;
 
 public class Experiment {
 	private Context<Object> context;
@@ -33,11 +33,11 @@ public class Experiment {
 	private final int NUM_control_parameters = 6;
 	/*****************************/
 	/****** NKCELL FEATURES ******/
-	private double nk_cell_speed = 0.005;
-	private double nk_cell_multiply_chance = 0.0003;
-	private double nk_cell_kill_distance = 0.01;
-	private double nk_cell_lose_distance = 0.02;
-	private double nk_cell_kill_chance = 0.02;
+	private double nk_cell_speed = 0.1;
+	private double nk_cell_multiply_chance = 0.0012;
+	private double nk_cell_kill_distance = 0.6;
+	private double nk_cell_lose_distance = 1.0;
+	private double nk_cell_kill_chance = 1.0;
 	/*****************************/
 
 	private double nk_cell_features[] = new double[NUM_CELL_FEATURES];
@@ -87,12 +87,12 @@ public class Experiment {
 	}
 
 	private void setWeights() {
-		weights[RESTING] = 1 * experiment_params.getDouble("resting");
-		weights[IL15] = 1.1 * experiment_params.getDouble("il15");
-		weights[ULBP2] = 0.9 * experiment_params.getDouble("ulbp2");
-		weights[MICA] = 0.9 * experiment_params.getDouble("mica");
-		weights[NKG2D] = 0.9 * experiment_params.getDouble("nkg2d");
-		weights[HLAI] = 1.1 * experiment_params.getDouble("hlai");
+		weights[RESTING] = experiment_params.getDouble("resting");
+		weights[IL15] = experiment_params.getDouble("il15") * 1.5;
+		weights[ULBP2] = experiment_params.getDouble("ulbp2");
+		weights[MICA] = experiment_params.getDouble("mica");
+		weights[NKG2D] = experiment_params.getDouble("nkg2d");
+		weights[HLAI] = experiment_params.getDouble("hlai") * 1.5;
 	}
 
 	private void setNKCellWeightedFeaturesValues() {
@@ -114,8 +114,6 @@ public class Experiment {
 	 * @return context with new Cells into it
 	 */
 	private Context<Object> createCellsForRatio(ContinuousSpace<Object> space, Grid<Object> grid) {
-		Global.RATIO = experiment_params.getInteger("cells_ratio");
-
 		calculateCellsForRatio();
 
 		for (int i = 0; i < ccellCount; i++) {
@@ -136,7 +134,7 @@ public class Experiment {
 	}
 
 	private void calculateCellsForRatio() {
-		int volume = Global.xDim * Global.yDim * Global.zDim;
+		int volume = GlobalVariables.xDim * GlobalVariables.yDim * GlobalVariables.zDim;
 
 		ccellCount = (int) (volume / (experiment_params.getInteger("cells_ratio") + 1));
 		nkcellCount = volume - ccellCount;

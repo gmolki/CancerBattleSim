@@ -19,22 +19,15 @@
     <entry>
       <string>Remaining CCells</string>
       <repast.simphony.data2.engine.CountSourceDefinition>
-        <typeName>cells.CCell</typeName>
+        <typeName>cancerBattleSim.agents.CCell</typeName>
         <id>Remaining CCells</id>
       </repast.simphony.data2.engine.CountSourceDefinition>
     </entry>
     <entry>
       <string>Remaining NKCells</string>
       <repast.simphony.data2.engine.CountSourceDefinition>
-        <typeName>cells.NKCell</typeName>
+        <typeName>cancerBattleSim.agents.NKCell</typeName>
         <id>Remaining NKCells</id>
-      </repast.simphony.data2.engine.CountSourceDefinition>
-    </entry>
-    <entry>
-      <string>Remaining NCells</string>
-      <repast.simphony.data2.engine.CountSourceDefinition>
-        <typeName>cells.NCell</typeName>
-        <id>Remaining NCells</id>
       </repast.simphony.data2.engine.CountSourceDefinition>
     </entry>
   </countSources>
