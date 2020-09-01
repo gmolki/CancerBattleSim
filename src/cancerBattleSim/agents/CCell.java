@@ -62,7 +62,7 @@ public class CCell extends Cell {
 		if (random.nextFloat() < multiply_chance) {
 			state = Mode.MULTIPLY;
 		}
-		moveTowards(this, null, speed, space, grid);
+		moveTowards(null);
 
 	}
 	

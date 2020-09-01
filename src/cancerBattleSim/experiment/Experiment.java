@@ -33,11 +33,11 @@ public class Experiment {
 	private final int NUM_control_parameters = 6;
 	/*****************************/
 	/****** NKCELL FEATURES ******/
-	private double nk_cell_speed = 0.05;
-	private double nk_cell_multiply_chance = 0.0006;
-	private double nk_cell_kill_distance = 0.25;
-	private double nk_cell_lose_distance = 0.5;
-	private double nk_cell_kill_chance = 0.5;
+	private double nk_cell_speed = 0.1;
+	private double nk_cell_multiply_chance = 0.0012;
+	private double nk_cell_kill_distance = 0.6;
+	private double nk_cell_lose_distance = 1.0;
+	private double nk_cell_kill_chance = 1.0;
 	/*****************************/
 
 	private double nk_cell_features[] = new double[NUM_CELL_FEATURES];
@@ -87,12 +87,12 @@ public class Experiment {
 	}
 
 	private void setWeights() {
-		weights[RESTING] = experiment_params.getDouble("resting") * 0.3;
-		weights[IL15] = experiment_params.getDouble("il15") * 3.0;
+		weights[RESTING] = experiment_params.getDouble("resting");
+		weights[IL15] = experiment_params.getDouble("il15") * 1.5;
 		weights[ULBP2] = experiment_params.getDouble("ulbp2");
 		weights[MICA] = experiment_params.getDouble("mica");
 		weights[NKG2D] = experiment_params.getDouble("nkg2d");
-		weights[HLAI] = experiment_params.getDouble("hlai") * 3.0;
+		weights[HLAI] = experiment_params.getDouble("hlai") * 1.5;
 	}
 
 	private void setNKCellWeightedFeaturesValues() {

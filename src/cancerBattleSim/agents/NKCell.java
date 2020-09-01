@@ -130,7 +130,7 @@ public class NKCell extends Cell {
 				// TODO: Create link to target_ccell
 			}
 		}
-		moveTowards(this, target_ccell, speed, space, grid);
+		moveTowards(target_ccell);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -164,7 +164,7 @@ public class NKCell extends Cell {
 					Context<Object> context = ContextUtils.getContext(this);
 					context.remove(target_ccell);
 				} else if (isInsideRadius(distanceToTarget)) {
-					moveTowards(this, target_ccell, speed, space, grid);
+					moveTowards(target_ccell);
 				} else {
 					// TODO: Destroy the link with the target_ccell
 					target_ccell = null;

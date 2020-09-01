@@ -44,22 +44,21 @@ public abstract class Cell {
 		context.remove(this);
 	};
 	
-	protected void moveTowards(Object agent, Object target, double distance, ContinuousSpace<Object> space,
-			Grid<Object> grid) {
+	protected void moveTowards(Object target) {
 		if (target == null) {
-			double x_distance = RandomHelper.nextIntFromTo(-1, 1) * distance,
-					y_distance = RandomHelper.nextIntFromTo(-1, 1) * distance,
-					z_distance = RandomHelper.nextIntFromTo(-1, 1) * distance;
+			double x_distance = RandomHelper.nextIntFromTo(-1, 1) * this.speed,
+					y_distance = RandomHelper.nextIntFromTo(-1, 1) * this.speed,
+					z_distance = RandomHelper.nextIntFromTo(-1, 1) * this.speed;
 
-			NdPoint newLocation = space.moveByDisplacement(agent, x_distance, y_distance, z_distance);
+			NdPoint newLocation = this.space.moveByDisplacement(this, x_distance, y_distance, z_distance);
 
-			grid.moveTo(agent, (int) newLocation.getX(), (int) newLocation.getY(), (int) newLocation.getZ());
+			this.grid.moveTo(this, (int) newLocation.getX(), (int) newLocation.getY(), (int) newLocation.getZ());
 		} else {
-			NdPoint agent_position = space.getLocation(agent);
-			NdPoint target_position = space.getLocation(target);
+			NdPoint agent_position = this.space.getLocation(this);
+			NdPoint target_position = this.space.getLocation(target);
 			double[] angle = angleFor3DMovement(agent_position, target_position);
-			agent_position = space.moveByVector(agent, distance, angle);
-			grid.moveTo(agent, (int) agent_position.getX(), (int) agent_position.getY(), (int) agent_position.getZ());
+			agent_position = this.space.moveByVector(this, this.speed, angle);
+			this.grid.moveTo(this, (int) agent_position.getX(), (int) agent_position.getY(), (int) agent_position.getZ());
 		}
 	}
 

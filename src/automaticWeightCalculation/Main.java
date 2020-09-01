@@ -6,13 +6,13 @@ import utils.Timer;
 
 public class Main {
 	public static void main(String[] args) {
-		int experiment = 1; // Coger desde los argumentos
-		int ratio = 2; // Coger desde los argumentos
+		int experiment = 2; // Coger desde los argumentos
+		int ratio = 4; // Coger desde los argumentos
 
 		Archiver.setUpWorkspace();
 		
-		runExperiment(experiment, ratio);
-//		runAllExperiments();
+//		runExperiment(experiment, ratio);
+		runAllExperiments();
 		return;
 	}
 
