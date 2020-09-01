@@ -1,5 +1,7 @@
 package cancerBattleSim.agents;
 
+import java.util.Random;
+
 import repast.simphony.context.Context;
 import repast.simphony.random.RandomHelper;
 import repast.simphony.space.continuous.ContinuousSpace;
@@ -7,25 +9,35 @@ import repast.simphony.space.continuous.NdPoint;
 import repast.simphony.space.grid.Grid;
 import repast.simphony.util.ContextUtils;
 
-public abstract class Cell {	
-	// PUBLIC ABSTRACT
-	public abstract void step();
-
-	// PROTECTED ABSTRACT
-	protected abstract void move();
-	
-	protected abstract void defend();
-
-	protected abstract void travel();
-
-	protected abstract void arrive();
-	
-	protected abstract void multiply();
-
-	// PROTECTED
+public abstract class Cell {
 	protected ContinuousSpace<Object> space;
 	protected Grid<Object> grid;
+	protected double speed;
+	protected double multiply_chance;
+	protected Random random = new Random();
+	
+	public double getSpeed() {
+		return speed;
+	}
 
+	public void setSpeed(double speed) {
+		this.speed = speed;
+	}
+
+	public double getMultiply_chance() {
+		return multiply_chance;
+	}
+
+	public void setMultiply_chance(double multiply_chance) {
+		this.multiply_chance = multiply_chance;
+	}
+	
+	public abstract void step();
+	protected abstract void move();
+	protected abstract void defend();
+	protected abstract void travel();
+	protected abstract void arrive();
+	protected abstract void multiply();
 	@SuppressWarnings("unchecked")
 	protected void die() {
 		Context<Object> context = ContextUtils.getContext(this);

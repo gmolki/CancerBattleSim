@@ -9,7 +9,8 @@ public class Main {
 		int experiment = 5; // Coger desde los argumentos
 		int ratio = 4; // Coger desde los argumentos
 
-//		Archiver.setUpWorkspace();
+		Archiver.setUpWorkspace();
+		
 		runExperiment(experiment, ratio);
 //		runAllExperiments();
 		return;

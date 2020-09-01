@@ -4,10 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import automaticWeightCalculation.runs.Run;
+import automaticWeightCalculation.runs.Runner;
 import utils.Archiver;
 import utils.GlobalVariables;
 
 public class ExperimentRunsController {
+	private Runner runner;
 	private List<Run> runs = new ArrayList<Run>(); // List containing all the runs that will be executed
 	private int stable_tick = 1000;
 	private BatchController batch_controller;
@@ -29,6 +31,14 @@ public class ExperimentRunsController {
 		this.batch_controller = new BatchController(this.control_parameters_activation);
 	}
 
+	public void executeRuns(List<Run> runs) {
+		for (Run run : runs) {
+			this.setUpRunner(run);
+			this.executeRun(run);
+		}
+		runner.cleanUpBatch();
+	}
+
 	public Run generateParentRun() {
 		return setUpRun(0.0, 0.0, 0.0, 0.0, 0.0, 0.0); // First run with all values set at 0.0
 	}
@@ -42,7 +52,7 @@ public class ExperimentRunsController {
 		return this.expected_ccells;
 	}
 	
-	public List<Run> getRuns(Run previous_best_run) {
+	public List<Run> getBatchRuns(Run previous_best_run) {
 		this.clearPreviousRuns();
 		return this.generateNewRuns(previous_best_run);
 	}
@@ -55,6 +65,27 @@ public class ExperimentRunsController {
 	private void clearPreviousRuns() {
 		runs.clear();
 		Archiver.cleanRunsFolder();
+	}
+	
+	private void setUpRunner(Run run) {
+		this.runner = new Runner(run.getParameters());
+		try {
+			runner.load();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void executeRun(Run run) {
+		this.runner.runInitialize();
+
+		for (int run_ticks = 0; run_ticks < (run.getStableTick()); run_ticks++) {
+			this.runner.step();
+			run_ticks += 1;
+		}
+
+		this.runner.stop();
+		this.runner.cleanUpRun();
 	}
 	
 	private List<Run> generateNewRuns(Run previous_best_run) {

@@ -6,11 +6,9 @@ import repast.simphony.engine.controller.DefaultController;
 import repast.simphony.engine.environment.AbstractRunner;
 import repast.simphony.engine.environment.ControllerRegistry;
 import repast.simphony.engine.environment.DefaultRunEnvironmentBuilder;
-import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.engine.environment.RunEnvironmentBuilder;
 import repast.simphony.engine.environment.RunState;
 import repast.simphony.engine.schedule.ISchedule;
-import repast.simphony.engine.schedule.Schedule;
 import repast.simphony.parameter.Parameters;
 import repast.simphony.parameter.SweeperProducer;
 import simphony.util.messages.MessageCenter;
@@ -61,21 +59,6 @@ public class Runner extends AbstractRunner {
 		controller.batchCleanup();
 	}
 
-	// returns the tick count of the next scheduled item
-	public double getNextScheduledTime() {
-		return ((Schedule) RunEnvironment.getInstance().getCurrentSchedule()).peekNextAction().getNextTime();
-	}
-
-	// returns the number of model actions on the schedule
-	public int getModelActionCount() {
-		return schedule.getModelActionCount();
-	}
-
-	// returns the number of non-model actions on the schedule
-	public int getActionCount() {
-		return schedule.getActionCount();
-	}
-
 	// Step the schedule
 	public void step() {
 		schedule.execute();
@@ -86,11 +69,7 @@ public class Runner extends AbstractRunner {
 		if (schedule != null)
 			schedule.executeEndActions();
 	}
-
-	public void setFinishing(boolean fin) {
-		schedule.setFinishing(fin);
-	}
-
+	
 	@Override
 	public void execute(RunState toExecuteOn) {
 		// TODO Auto-generated method stub
