@@ -69,13 +69,15 @@ public class Archiver {
 		if (!batch_folder.exists())
 			batch_folder.mkdirs();
 		try {
-			if (!batch_params.exists()) {
-				batch_params.createNewFile();
-				FileWriter writer = new FileWriter("batch/batch_params.xml");
-				String params = "<?xml version=\"1.0\" ?><sweep runs=\"1\"><parameter name=\"mica\" type=\"constant\" constant_type=\"double\" value=\"0.0\"></parameter><parameter name=\"resting_activation\" type=\"constant\" constant_type=\"boolean\" value=\"true\"></parameter><parameter name=\"hlai_activation\" type=\"constant\" constant_type=\"boolean\" value=\"true\"></parameter><parameter name=\"il15\" type=\"constant\" constant_type=\"double\" value=\"0.0\"></parameter><parameter name=\"ulbp2_activation\" type=\"constant\" constant_type=\"boolean\" value=\"true\"></parameter><parameter name=\"cells_ratio\" type=\"constant\" constant_type=\"int\" value=\"8\"></parameter><parameter name=\"nkg2d_activation\" type=\"constant\" constant_type=\"boolean\" value=\"false\"></parameter><parameter name=\"mica_activation\" type=\"constant\" constant_type=\"boolean\" value=\"false\"></parameter><parameter name=\"hlai\" type=\"constant\" constant_type=\"double\" value=\"0.0\"></parameter><parameter name=\"nkg2d\" type=\"constant\" constant_type=\"double\" value=\"0.0\"></parameter><parameter name=\"il15_activation\" type=\"constant\" constant_type=\"boolean\" value=\"false\"></parameter><parameter name=\"weight_calculation\" type=\"constant\" constant_type=\"boolean\" value=\"true\"></parameter><parameter name=\"resting\" type=\"constant\" constant_type=\"double\" value=\"0.0\"></parameter><parameter name=\"ulbp2\" type=\"constant\" constant_type=\"double\" value=\"0.0\"></parameter><parameter name=\"randomSeed\" type=\"constant\" constant_type=\"int\" value=\"1\"></parameter></sweep>";
-				writer.write(params);
-				writer.close();
+			if (batch_params.exists()) {
+				batch_params.delete();
+				batch_params = new File(batch_folder.toPath() + "/batch_params.xml");
 			}
+			batch_params.createNewFile();
+			FileWriter writer = new FileWriter("batch/batch_params.xml");
+			String params = "<?xml version=\"1.0\" ?><sweep runs=\"1\"><parameter name=\"mica\" type=\"constant\" constant_type=\"double\" value=\"0.0\"></parameter><parameter name=\"resting_activation\" type=\"constant\" constant_type=\"boolean\" value=\"true\"></parameter><parameter name=\"hlai_activation\" type=\"constant\" constant_type=\"boolean\" value=\"true\"></parameter><parameter name=\"il15\" type=\"constant\" constant_type=\"double\" value=\"0.0\"></parameter><parameter name=\"ulbp2_activation\" type=\"constant\" constant_type=\"boolean\" value=\"true\"></parameter><parameter name=\"cells_ratio\" type=\"constant\" constant_type=\"int\" value=\"8\"></parameter><parameter name=\"nkg2d_activation\" type=\"constant\" constant_type=\"boolean\" value=\"false\"></parameter><parameter name=\"mica_activation\" type=\"constant\" constant_type=\"boolean\" value=\"false\"></parameter><parameter name=\"hlai\" type=\"constant\" constant_type=\"double\" value=\"0.0\"></parameter><parameter name=\"nkg2d\" type=\"constant\" constant_type=\"double\" value=\"0.0\"></parameter><parameter name=\"il15_activation\" type=\"constant\" constant_type=\"boolean\" value=\"false\"></parameter><parameter name=\"weight_calculation\" type=\"constant\" constant_type=\"boolean\" value=\"true\"></parameter><parameter name=\"resting\" type=\"constant\" constant_type=\"double\" value=\"0.0\"></parameter><parameter name=\"ulbp2\" type=\"constant\" constant_type=\"double\" value=\"0.0\"></parameter><parameter name=\"randomSeed\" type=\"constant\" constant_type=\"int\" value=\"1\"></parameter></sweep>";
+			writer.write(params);
+			writer.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
